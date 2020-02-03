@@ -10,7 +10,6 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.validation.Valid;
-import java.util.List;
 import java.util.Optional;
 
 @Service
@@ -25,10 +24,7 @@ public class UserServiceImpl implements UserService, UserDetailsService {
     @Override
     @Transactional
     public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        Optional<User> user = userRepository.findUserByUsername(username);
-
-        user.orElseThrow(() -> new UsernameNotFoundException("Invalid username or password."));
-        return user.map(UserDetailsImpl::new).get();
+        return new UserDetailsImpl(findUserByUsername(username));
     }
 
     @Override

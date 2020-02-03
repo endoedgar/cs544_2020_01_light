@@ -23,7 +23,7 @@ public class User implements Serializable {
     private String barCodeId;
     private String email;
     @ManyToMany(fetch = FetchType.EAGER)
-    private Set<Role> role;
+    private Set<Role> roles;
     @OneToMany(mappedBy = "user")
     private List<Attendance> attendances;
 
@@ -93,12 +93,12 @@ public class User implements Serializable {
         this.email = email;
     }
 
-    public Set<Role> getRole() {
-        return Collections.unmodifiableSet(role);
+    public Set<Role> getRoles() {
+        return Collections.unmodifiableSet(roles);
     }
 
-    public void setRole(Set<Role> role) {
-        this.role = role;
+    public void setRoles(Set<Role> roles) {
+        this.roles = roles;
     }
 
     public List<Attendance> getAttendances() {

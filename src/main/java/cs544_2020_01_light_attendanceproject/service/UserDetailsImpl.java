@@ -1,6 +1,8 @@
 package cs544_2020_01_light_attendanceproject.service;
 
+import cs544_2020_01_light_attendanceproject.domain.Role;
 import cs544_2020_01_light_attendanceproject.domain.User;
+import org.jboss.logging.Logger;
 import org.springframework.security.core.GrantedAuthority;
 import org.springframework.security.core.authority.SimpleGrantedAuthority;
 import org.springframework.security.core.userdetails.UserDetails;
@@ -19,7 +21,7 @@ public class UserDetailsImpl implements UserDetails {
         this.username = user.getUsername();
         this.password = user.getPassword();
         this.isActive = user.isEnabled();
-        this.authorities = user.getRole().stream().map(x -> new SimpleGrantedAuthority(x.getType())).collect(Collectors.toList());
+        this.authorities = user.getRoles().stream().map(x -> new SimpleGrantedAuthority(x.getType())).collect(Collectors.toList());
     }
 
     public UserDetailsImpl() {}
