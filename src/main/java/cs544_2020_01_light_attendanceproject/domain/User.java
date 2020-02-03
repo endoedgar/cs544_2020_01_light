@@ -6,6 +6,7 @@ import javax.persistence.*;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.List;
+import java.util.Set;
 
 @Entity
 public class User implements Serializable {
@@ -22,7 +23,7 @@ public class User implements Serializable {
     private String barCodeId;
     private String email;
     @ManyToMany(fetch = FetchType.EAGER)
-    private List<Role> role;
+    private Set<Role> role;
     @OneToMany(mappedBy = "user")
     private List<Attendance> attendances;
 
@@ -92,11 +93,11 @@ public class User implements Serializable {
         this.email = email;
     }
 
-    public List<Role> getRole() {
-        return Collections.unmodifiableList(role);
+    public Set<Role> getRole() {
+        return Collections.unmodifiableSet(role);
     }
 
-    public void setRole(List<Role> role) {
+    public void setRole(Set<Role> role) {
         this.role = role;
     }
 
