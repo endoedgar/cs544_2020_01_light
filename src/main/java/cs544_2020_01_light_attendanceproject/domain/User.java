@@ -3,6 +3,8 @@ package cs544_2020_01_light_attendanceproject.domain;
 import org.hibernate.annotations.NaturalId;
 
 import javax.persistence.*;
+import javax.validation.Valid;
+import javax.validation.constraints.NotEmpty;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.List;
@@ -13,16 +15,23 @@ public class User implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
+    @NotEmpty(message = "Please provide a first name.")
     private String firstName;
+    @NotEmpty(message = "Please provide a last name.")
     private String lastName;
+    @NotEmpty(message = "Please provide a password.")
     private String password;
     private boolean enabled;
-    @NaturalId
+    @Column(unique = true)
+    @NotEmpty(message = "Please provide an username.")
     private String username;
-    @NaturalId
+    @Column(unique = true)
+    @NotEmpty(message = "Please provide a bar code.")
     private String barCodeId;
+    @NotEmpty(message = "Please provide an email.")
     private String email;
-    @ManyToMany(fetch = FetchType.EAGER)
+    @ManyToMany
+    @NotEmpty(message = "Please at least one role.")
     private Set<Role> roles;
     @OneToMany(mappedBy = "user")
     private List<Attendance> attendances;

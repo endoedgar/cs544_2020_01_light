@@ -1,22 +1,15 @@
 package cs544_2020_01_light_attendanceproject.controller;
 
 import cs544_2020_01_light_attendanceproject.domain.User;
+import cs544_2020_01_light_attendanceproject.exceptions.UserNotFoundException;
 import cs544_2020_01_light_attendanceproject.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.access.annotation.Secured;
-import org.springframework.security.access.prepost.PreAuthorize;
-import org.springframework.security.core.authority.SimpleGrantedAuthority;
-import org.springframework.security.core.context.SecurityContextHolder;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.HttpStatus;
+import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
-import java.util.Collection;
 
 @RestController
-@Secured("ROLE_ADMIN")
 @RequestMapping("/admin")
 public class AdminController {
     private UserService userService;
@@ -26,19 +19,29 @@ public class AdminController {
         this.userService = userService;
     }
 
-    @GetMapping("/myRoles")
-    public Collection<SimpleGrantedAuthority> getMyRoles() {
-        return(Collection<SimpleGrantedAuthority>)    SecurityContextHolder.getContext().getAuthentication().getAuthorities();
-    }
-
     @PostMapping("/user")
-    public String registerNewUserAccount(@Valid User user) {
-        userService.registerNewUserAccount(user);
-        return "redirect:/";
+    @ResponseStatus(HttpStatus.CREATED)
+    public User newUser(@RequestBody @Valid User user) {
+        return userService.registerNewUserAccount(user);
     }
 
     @GetMapping("/user")
-    public Iterable<User> getUsers() {
+    public Iterable<User> all() {
         return userService.listUsers();
+    }
+
+    @GetMapping("/user/{username}")
+    public User one(@PathVariable String username) {
+        return userService.findOneUser(username).orElseThrow(() -> new UserNotFoundException(username));
+    }
+
+    @DeleteMapping("/user/{username}")
+    public void deleteUser(@PathVariable String username) {
+        userService.deleteByUsername(username);
+    }
+
+    @PutMapping("/user/{username}")
+    public User replaceUser(@RequestBody @Valid User newUser, @PathVariable String username) {
+        return userService.replaceUser(newUser, username);
     }
 }
