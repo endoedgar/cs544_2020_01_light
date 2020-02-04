@@ -17,7 +17,7 @@ commands:
       parameters:
           cmd:
               type: string
-              default: package
+              default: dependency:go-offline
       steps:
           - *attach_workspace
           - restore_cache: 
