@@ -1,0 +1,62 @@
+version: 2.1
+attach_workspace: &attach_workspace
+  attach_workspace:
+    at: ~/working-dir/workspace
+executors:
+  java_executor:
+    docker:
+      - image: circleci/openjdk:11-jdk
+      - image: mysql:latest
+        command: mysqld
+        environment:
+           MYSQL_ROOT_PASSWORD: 12345
+    working_directory: ~/working-dir
+
+    environment:
+      MAVEN_OPTS: -Xmx3200m
+commands:
+   maven_cmd:
+      description: "A command that executes maven"
+      parameters:
+          cmd:
+              type: string
+              default: dependency:go-offline
+      steps:
+          - *attach_workspace
+          - restore_cache: 
+               keys:
+                   - v1-dependencies-maven {{ checksum "workspace/repo/pom.xml" }}
+          - run: | 
+               cd workspace/repo/
+               mvn << parameters.cmd >>
+          - save_cache:
+               paths:
+                   - ~/.m2
+               key: v1-dependencies-maven {{ checksum "workspace/repo/pom.xml" }}
+          - run: |
+               cd workspace/repo/
+               mvn integration-test
+          - store_artifacts:
+               path: workspace/repo/target
+jobs:
+  checkout_code:
+    executor: java_executor
+    steps:
+      - checkout:
+          path: workspace/repo
+      - persist_to_workspace:
+          root: workspace
+          paths:
+            - repo
+  build:
+    executor: java_executor
+    steps:
+      - maven_cmd
+workflows:
+      version: 2
+      main:
+          jobs:
+            - checkout_code
+            - build:
+                  requires:
+                       - checkout_code
