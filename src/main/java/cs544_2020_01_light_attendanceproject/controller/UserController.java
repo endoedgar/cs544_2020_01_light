@@ -13,11 +13,11 @@ import javax.validation.Valid;
 @RestController
 @Secured("ROLE_ADMIN")
 @RequestMapping("/admin")
-public class AdminController {
+public class UserController {
     private UserService userService;
 
     @Autowired
-    public AdminController(UserService userService) {
+    public UserController(UserService userService) {
         this.userService = userService;
     }
 
