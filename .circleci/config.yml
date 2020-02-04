@@ -56,5 +56,5 @@ workflows:
             - checkout_code
             - build:
                   requires:
-                       checkout_code
+                       - checkout_code
                 
