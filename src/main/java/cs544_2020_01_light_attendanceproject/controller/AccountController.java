@@ -28,6 +28,11 @@ public class AccountController {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String currentUsername = authentication.getName();
 
+        System.out.println(payload.toString());
+        System.out.println(currentUsername);
+        System.out.println(authentication.toString());
+        System.out.println(this.userService);
+
         this.userService.setUserPassword(currentUsername, payload.get("password"));
         return payload.get("password");
     }
