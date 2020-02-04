@@ -1,11 +1,13 @@
 package cs544_2020_01_light_attendanceproject.controller;
 
 import cs544_2020_01_light_attendanceproject.domain.User;
+import cs544_2020_01_light_attendanceproject.exceptions.AdminsCannotDeleteThemselvesException;
 import cs544_2020_01_light_attendanceproject.exceptions.UserNotFoundException;
 import cs544_2020_01_light_attendanceproject.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.security.access.annotation.Secured;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
@@ -39,6 +41,9 @@ public class UserController {
 
     @DeleteMapping("/{username}")
     public void deleteUser(@PathVariable String username) {
+        String currentUsername = SecurityContextHolder.getContext().getAuthentication().getName();
+        if(username.equals(currentUsername))
+            throw new AdminsCannotDeleteThemselvesException(username);
         userService.deleteByUsername(username);
     }
 
