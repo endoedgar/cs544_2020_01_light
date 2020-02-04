@@ -40,14 +40,14 @@ commands:
                path: workspace/repo/target
 jobs:
   checkout_code:
-     executor: java_executor
-     steps:
-         - checkout:
-              path: workspace/repo
-         - persist_to_workspace:
-              root: workspace
-              paths:
-                - repo
+    executor: java_executor
+    steps:
+      - checkout:
+          path: workspace/repo
+      - persist_to_workspace:
+          root: workspace
+          paths:
+            - repo
   build:
     executor: java_executor
     steps:
@@ -60,4 +60,3 @@ workflows:
             - build:
                   requires:
                        - checkout_code
-                
