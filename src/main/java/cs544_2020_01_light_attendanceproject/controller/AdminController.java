@@ -1,7 +1,9 @@
 package cs544_2020_01_light_attendanceproject.controller;
 
+import cs544_2020_01_light_attendanceproject.domain.Timeslot;
 import cs544_2020_01_light_attendanceproject.domain.User;
 import cs544_2020_01_light_attendanceproject.exceptions.UserNotFoundException;
+import cs544_2020_01_light_attendanceproject.service.TimeSlotService;
 import cs544_2020_01_light_attendanceproject.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -14,6 +16,8 @@ import javax.validation.Valid;
 @Secured("ROLE_ADMIN")
 @RequestMapping("/admin")
 public class AdminController {
+	@Autowired
+	private TimeSlotService timeSlotService; 
     private UserService userService;
 
     @Autowired
@@ -46,4 +50,32 @@ public class AdminController {
     public User replaceUser(@RequestBody @Valid User newUser, @PathVariable String username) {
         return userService.replaceUser(newUser, username);
     }
+    
+    //TimeSlot
+    @PostMapping("/timeslots")
+    @ResponseStatus(HttpStatus.CREATED)
+    public Timeslot newTimeSlot(@RequestBody @Valid Timeslot timeSlot) {
+        return timeSlotService.create(timeSlot);
+    }
+
+    @GetMapping("/timeslots")
+    public Iterable<Timeslot> fetchAllTs() {
+        return timeSlotService.getAll();
+    }
+
+    @GetMapping("/timeslots/{abbr}")
+    public Timeslot fetchTs(@PathVariable String abbr) {
+        return timeSlotService.get(abbr).orElse(null);
+    }
+
+    @DeleteMapping("/timeslots/{abbr}")
+    public void deleteTs(@PathVariable String abbr) {
+        timeSlotService.delete(abbr);
+    }
+
+    @PutMapping("/timeslots/{abbr}")
+    public Timeslot updateTs(@RequestBody @Valid Timeslot newTs, @PathVariable String abbr) {
+        return timeSlotService.update(newTs);
+    }
+    
 }
