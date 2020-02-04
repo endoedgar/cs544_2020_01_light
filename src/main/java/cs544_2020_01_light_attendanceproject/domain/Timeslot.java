@@ -4,6 +4,9 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import java.sql.Time;
 import java.util.Date;
 
@@ -12,9 +15,12 @@ public class Timeslot {
     @Id
     private String abbreviation;
     private String description;
+    
     @Temporal(TemporalType.TIME)
+    @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="HH:mm", timezone="CST")
     private Date beginTime;
     @Temporal(TemporalType.TIME)
+    @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="HH:mm", timezone="CST")
     private Date endTime;
 
     public Timeslot() {
