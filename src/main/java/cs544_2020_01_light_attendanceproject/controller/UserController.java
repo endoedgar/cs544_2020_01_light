@@ -1,8 +1,10 @@
 package cs544_2020_01_light_attendanceproject.controller;
 
+import cs544_2020_01_light_attendanceproject.domain.Timeslot;
 import cs544_2020_01_light_attendanceproject.domain.User;
 import cs544_2020_01_light_attendanceproject.exceptions.AdminsCannotDeleteThemselvesException;
 import cs544_2020_01_light_attendanceproject.exceptions.UserNotFoundException;
+import cs544_2020_01_light_attendanceproject.service.TimeSlotService;
 import cs544_2020_01_light_attendanceproject.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -61,4 +63,7 @@ public class UserController {
     public User replaceUser(@RequestBody @Valid User newUser, @PathVariable String username) {
         return userService.replaceUser(newUser, username);
     }
+    
+    
+    
 }
