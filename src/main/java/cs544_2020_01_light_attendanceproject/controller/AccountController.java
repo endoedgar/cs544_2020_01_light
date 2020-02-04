@@ -1,6 +1,5 @@
 package cs544_2020_01_light_attendanceproject.controller;
 
-import cs544_2020_01_light_attendanceproject.service.UserDetailsImpl;
 import cs544_2020_01_light_attendanceproject.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
