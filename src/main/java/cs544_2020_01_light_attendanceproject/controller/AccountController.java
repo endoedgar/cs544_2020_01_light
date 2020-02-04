@@ -25,8 +25,7 @@ public class AccountController {
 
     @PostMapping("/changePassword")
     public String changePassword(@RequestBody Map<String, String> payload) {
-        Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
-        String currentUsername = authentication.getName();
+        String currentUsername = SecurityContextHolder.getContext().getAuthentication().getName();
 
         this.userService.setUserPassword(currentUsername, payload.get("password"));
         return payload.get("password");
