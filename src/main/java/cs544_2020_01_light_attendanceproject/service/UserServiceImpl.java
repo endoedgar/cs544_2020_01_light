@@ -8,25 +8,18 @@ import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
-import org.springframework.web.bind.annotation.PathVariable;
 
 import javax.validation.Valid;
 import java.util.HashSet;
 import java.util.Optional;
 
 @Service
-public class UserServiceImpl implements UserService, UserDetailsService {
+public class UserServiceImpl implements UserService {
     private UserRepository userRepository;
 
     @Autowired
     public UserServiceImpl(UserRepository userRepository) {
         this.userRepository = userRepository;
-    }
-
-    @Override
-    @Transactional
-    public UserDetails loadUserByUsername(String username) throws UsernameNotFoundException {
-        return new UserDetailsImpl(findUserByUsername(username));
     }
 
     @Override
@@ -76,5 +69,14 @@ public class UserServiceImpl implements UserService, UserDetailsService {
             newUser.setUsername(username);
             return userRepository.save(newUser);
         });
+    }
+
+    @Transactional
+    public User setUserPassword(String username, String newPassword) {
+        User user = userRepository.findUserByUsername(username).orElseThrow(() -> new UsernameNotFoundException("Invalid username."));
+
+        user.setPassword(newPassword);
+
+        return userRepository.save(user);
     }
 }

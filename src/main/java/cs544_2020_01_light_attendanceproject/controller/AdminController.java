@@ -5,11 +5,13 @@ import cs544_2020_01_light_attendanceproject.exceptions.UserNotFoundException;
 import cs544_2020_01_light_attendanceproject.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.*;
 
 import javax.validation.Valid;
 
 @RestController
+@Secured("ROLE_ADMIN")
 @RequestMapping("/admin")
 public class AdminController {
     private UserService userService;

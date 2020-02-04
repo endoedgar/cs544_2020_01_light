@@ -16,12 +16,13 @@ import org.springframework.security.crypto.password.PasswordEncoder;
 @EnableWebSecurity
 @EnableGlobalMethodSecurity(securedEnabled = true)
 public class SecurityConfiguration extends WebSecurityConfigurerAdapter {
+    @Autowired
     private UserDetailsService userDetailsService;
     @Value("${security.enable-csrf}")
     private boolean csrfEnabled;
 
-    @Autowired
-    public SecurityConfiguration(UserDetailsService userDetailsService) {
+
+    public void setUserDetailsService(UserDetailsService userDetailsService) {
         this.userDetailsService = userDetailsService;
     }
 
