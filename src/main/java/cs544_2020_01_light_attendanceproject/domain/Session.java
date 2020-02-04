@@ -1,6 +1,8 @@
 package cs544_2020_01_light_attendanceproject.domain;
 
 import javax.persistence.*;
+import javax.validation.Valid;
+import javax.validation.constraints.NotEmpty;
 import java.util.Date;
 
 @Entity
@@ -8,10 +10,12 @@ public class Session {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
-    @ManyToOne
+    @ManyToOne(cascade = CascadeType.ALL)
+    @Valid
     private CourseOffering courseOffering;
     @ManyToOne
     private Timeslot timeslot;
+    @Temporal(TemporalType.TIMESTAMP)
     private Date date;
 
     public Session() {}

@@ -1,9 +1,8 @@
 package cs544_2020_01_light_attendanceproject.domain;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
+import javax.validation.constraints.NotEmpty;
+import java.util.List;
 
 @Entity
 public class Course {
@@ -11,8 +10,8 @@ public class Course {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     private String name;
-    private String description;
 
+    private String description;
     public Course() {}
 
     public long getId() {
@@ -38,4 +37,5 @@ public class Course {
     public void setDescription(String description) {
         this.description = description;
     }
+
 }
