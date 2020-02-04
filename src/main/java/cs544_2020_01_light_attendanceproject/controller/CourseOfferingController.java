@@ -1,8 +1,7 @@
 package cs544_2020_01_light_attendanceproject.controller;
 
 import cs544_2020_01_light_attendanceproject.domain.CourseOffering;
-import cs544_2020_01_light_attendanceproject.service.CourseOfferingService;
-import cs544_2020_01_light_attendanceproject.service.CourseOfferingService;
+import cs544_2020_01_light_attendanceproject.service.CourseOfferingServiceImlpl;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.*;
 
@@ -12,7 +11,7 @@ import java.util.List;
 @RestController
 @RequestMapping("/courseOffering")
 public class CourseOfferingController {
-    private CourseOfferingService courseOfferingServise;
+    private CourseOfferingServiceImlpl courseOfferingServise;
 
     @PostMapping("/course")
     @ResponseStatus(HttpStatus.CREATED)
@@ -30,12 +29,12 @@ public class CourseOfferingController {
         return courseOfferingServise.getCourseOffering(id);
     }
 
-    @DeleteMapping("/course/delete")
+    @DeleteMapping("/delete")
     public void deleteCourseOffering(CourseOffering courseOffering) {
         courseOfferingServise.deleteOfferingCourse(courseOffering);
     }
 
-    @PutMapping("/user/update")
+    @PutMapping("/update")
     public CourseOffering updateCourseOffering(@RequestBody @Valid CourseOffering courseOffering) {
         return courseOfferingServise.updateCourseOffering(courseOffering);
     }
