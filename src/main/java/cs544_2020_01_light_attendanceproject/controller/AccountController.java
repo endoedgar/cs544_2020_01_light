@@ -27,6 +27,11 @@ public class AccountController {
     public String changePassword(@RequestBody Map<String, String> payload) {
         String currentUsername = SecurityContextHolder.getContext().getAuthentication().getName();
 
+        System.out.println(payload.toString());
+        System.out.println(currentUsername);
+        System.out.println(authentication.toString());
+        System.out.println(this.userService);
+
         this.userService.setUserPassword(currentUsername, payload.get("password"));
         return payload.get("password");
     }
