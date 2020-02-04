@@ -6,11 +6,14 @@ import cs544_2020_01_light_attendanceproject.exceptions.UserNotFoundException;
 import cs544_2020_01_light_attendanceproject.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.bind.annotation.*;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
+import java.net.URI;
 
 @RestController
 @Secured("ROLE_ADMIN")
@@ -25,8 +28,15 @@ public class UserController {
 
     @PostMapping("/")
     @ResponseStatus(HttpStatus.CREATED)
-    public User newUser(@RequestBody @Valid User user) {
-        return userService.registerNewUserAccount(user);
+    public ResponseEntity<Object> newUser(@RequestBody @Valid User user) {
+        userService.registerNewUserAccount(user);
+
+        URI location = ServletUriComponentsBuilder.fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(user.getUsername())
+                .toUri();
+
+        return ResponseEntity.created(location).build();
     }
 
     @GetMapping("/")
