@@ -2,24 +2,33 @@ package cs544_2020_01_light_attendanceproject;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 import cs544_2020_01_light_attendanceproject.controller.UserController;
 import cs544_2020_01_light_attendanceproject.dao.UserRepository;
 import cs544_2020_01_light_attendanceproject.domain.User;
+import cs544_2020_01_light_attendanceproject.exceptions.AdminsCannotDeleteThemselvesException;
 import cs544_2020_01_light_attendanceproject.service.UserService;
+import net.bytebuddy.implementation.bytecode.Throw;
+import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.http.ResponseEntity;
 import org.springframework.mock.web.MockHttpServletRequest;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContext;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.web.context.request.RequestContextHolder;
 import org.springframework.web.context.request.ServletRequestAttributes;
-
 import java.util.ArrayList;
+import java.util.Iterator;
 import java.util.List;
 
 @ExtendWith(MockitoExtension.class)
@@ -49,7 +58,7 @@ public class UserControllerTest {
 
         User user2 = new User();
         user2.setUsername("mockuser2");
-        user2.setFirstName("Mock user 2  firstname");
+        user2.setFirstName("Mock user 2 firstname");
         user2.setLastName("Mock user 2 lastname");
         user2.setPassword("123452");
         user2.setEnabled(true);
@@ -60,7 +69,7 @@ public class UserControllerTest {
     }
 
     @Test
-    public void testAddUser()
+    public void addUser()
     {
         MockHttpServletRequest request = new MockHttpServletRequest();
         RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));
@@ -72,11 +81,59 @@ public class UserControllerTest {
     }
 
     @Test
+    public void updateUser() {
+        when(userService.replaceUser(any(User.class), any(String.class))).thenReturn(null);
+        when(userService.replaceUser(any(User.class), eq("mockuser"))).thenReturn(listOfMockUsers.get(0));
+
+        MockHttpServletRequest request = new MockHttpServletRequest();
+        RequestContextHolder.setRequestAttributes(new ServletRequestAttributes(request));
+
+        User user = userController.replaceUser(listOfMockUsers.get(0), "mockuser");
+
+        assertThat(user).isInstanceOf(User.class);
+        assertThat(user).isNotNull();
+        assertThat(user.getUsername()).isEqualTo("mockuser");
+
+        User nonExistingUser = userController.replaceUser(listOfMockUsers.get(0), "nonExistingUser");
+        assertThat(nonExistingUser).isNull();
+    }
+
+    @Test
+    public void deleteNormalUser() {
+        Authentication authentication = Mockito.mock(Authentication.class);
+        SecurityContext securityContext = Mockito.mock(SecurityContext.class);
+        Mockito.when(securityContext.getAuthentication()).thenReturn(authentication);
+        SecurityContextHolder.setContext(securityContext);
+
+        when(authentication.getName()).thenReturn("loggedInUsername");
+        userController.deleteUser("mockuser");
+    }
+
+    @Test
+    public void deleteYourself() {
+        Authentication authentication = Mockito.mock(Authentication.class);
+        SecurityContext securityContext = Mockito.mock(SecurityContext.class);
+        Mockito.when(securityContext.getAuthentication()).thenReturn(authentication);
+        SecurityContextHolder.setContext(securityContext);
+
+        when(authentication.getName()).thenReturn("loggedInUsername");
+
+        Assertions.assertThrows(AdminsCannotDeleteThemselvesException.class, () -> {
+            userController.deleteUser("loggedInUsername");
+        });
+    }
+
+    @Test
     public void testFindAll() {
         when(userService.listUsers()).thenReturn(listOfMockUsers);
 
         Iterable<User> result = userController.all();
 
-        assertThat(result.iterator().hasNext()).isTrue();
+        Iterator<User> iterator = result.iterator();
+
+        assertThat(iterator.hasNext()).isTrue();
+        assertThat(iterator.next().getFirstName()).isEqualTo("Mock user firstname");
+        assertThat(iterator.next().getFirstName()).isEqualTo("Mock user 2 firstname");
+        assertThat(iterator.hasNext()).isFalse();
     }
 }
