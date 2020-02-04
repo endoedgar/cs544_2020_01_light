@@ -12,7 +12,7 @@ import javax.validation.Valid;
 
 @RestController
 @Secured("ROLE_ADMIN")
-@RequestMapping("/admin")
+@RequestMapping("/user")
 public class UserController {
     private UserService userService;
 
@@ -21,28 +21,28 @@ public class UserController {
         this.userService = userService;
     }
 
-    @PostMapping("/user")
+    @PostMapping("/")
     @ResponseStatus(HttpStatus.CREATED)
     public User newUser(@RequestBody @Valid User user) {
         return userService.registerNewUserAccount(user);
     }
 
-    @GetMapping("/user")
+    @GetMapping("/")
     public Iterable<User> all() {
         return userService.listUsers();
     }
 
-    @GetMapping("/user/{username}")
+    @GetMapping("/{username}")
     public User one(@PathVariable String username) {
         return userService.findOneUser(username).orElseThrow(() -> new UserNotFoundException(username));
     }
 
-    @DeleteMapping("/user/{username}")
+    @DeleteMapping("/{username}")
     public void deleteUser(@PathVariable String username) {
         userService.deleteByUsername(username);
     }
 
-    @PutMapping("/user/{username}")
+    @PutMapping("/{username}")
     public User replaceUser(@RequestBody @Valid User newUser, @PathVariable String username) {
         return userService.replaceUser(newUser, username);
     }
