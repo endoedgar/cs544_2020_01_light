@@ -7,9 +7,9 @@ executors:
     docker:
       - image: circleci/openjdk:11-jdk
       - image: mysql:latest
-              command: mysqld
-                   environment:
-                        MYSQL_ROOT_PASSWORD: 12345
+        command: mysqld
+        environment:
+           MYSQL_ROOT_PASSWORD: 12345
     working_directory: ~/working-dir
 
     environment:
