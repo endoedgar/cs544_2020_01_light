@@ -1,5 +1,6 @@
 package cs544_2020_01_light_attendanceproject.controller;
 
+import cs544_2020_01_light_attendanceproject.service.UserDetailsImpl;
 import cs544_2020_01_light_attendanceproject.service.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.access.annotation.Secured;
@@ -27,11 +28,6 @@ public class AccountController {
     public String changePassword(@RequestBody Map<String, String> payload) {
         Authentication authentication = SecurityContextHolder.getContext().getAuthentication();
         String currentUsername = authentication.getName();
-
-        System.out.println(payload.toString());
-        System.out.println(currentUsername);
-        System.out.println(authentication.toString());
-        System.out.println(this.userService);
 
         this.userService.setUserPassword(currentUsername, payload.get("password"));
         return payload.get("password");
