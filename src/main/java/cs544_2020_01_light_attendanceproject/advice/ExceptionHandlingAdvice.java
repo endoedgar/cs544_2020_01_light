@@ -1,5 +1,6 @@
 package cs544_2020_01_light_attendanceproject.advice;
 
+import cs544_2020_01_light_attendanceproject.exceptions.AdminsCannotDeleteThemselvesException;
 import cs544_2020_01_light_attendanceproject.exceptions.ItemNotFoundException;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
@@ -62,6 +63,14 @@ public class ExceptionHandlingAdvice extends ResponseEntityExceptionHandler {
 		details.add(ex.getLocalizedMessage());
 		ErrorResponse error = new ErrorResponse("Server Error", details);
 		return new ResponseEntity(error, HttpStatus.INTERNAL_SERVER_ERROR);
+	}
+
+	@ExceptionHandler(AdminsCannotDeleteThemselvesException.class)
+	public final ResponseEntity<Object> handleAdminsCannotDeleteThemselvesException(AdminsCannotDeleteThemselvesException ex, WebRequest request) {
+		List<String> details = new ArrayList<>();
+		details.add(ex.getLocalizedMessage());
+		ErrorResponse error = new ErrorResponse("Bad request", details);
+		return new ResponseEntity(error, HttpStatus.BAD_REQUEST);
 	}
 
 	@ExceptionHandler(ItemNotFoundException.class)

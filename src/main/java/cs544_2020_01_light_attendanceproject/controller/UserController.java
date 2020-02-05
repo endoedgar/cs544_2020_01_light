@@ -73,7 +73,8 @@ public class UserController {
     @Secured(value = {"ROLE_ADMIN"})
     @PutMapping("/{username}")
     public User replaceUser(@RequestBody @Valid User newUser, @PathVariable String username) {
-        return userService.replaceUser(newUser, username);
+        User returnUser = userService.replaceUser(newUser, username);
+        return returnUser;
     }
     
     

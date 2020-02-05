@@ -4,7 +4,9 @@ import org.hibernate.annotations.NaturalId;
 
 import javax.persistence.*;
 import javax.validation.Valid;
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Pattern;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.List;
@@ -26,9 +28,11 @@ public class User implements Serializable {
     @NotEmpty(message = "Please provide an username.")
     private String username;
     @Column(unique = true)
+    @Pattern(regexp = "^\\d{3}-[a-zA-z]{2}-[a-zA-Z]{4}$", message = "Please provide a valid bar code (pattern 000-xx-yyyy)")
     @NotEmpty(message = "Please provide a bar code.")
     private String barCodeId;
     @NotEmpty(message = "Please provide an email.")
+    @Email(message = "Please provide a valid email.")
     private String email;
     @ManyToMany
     @NotEmpty(message = "Please at least one role.")
