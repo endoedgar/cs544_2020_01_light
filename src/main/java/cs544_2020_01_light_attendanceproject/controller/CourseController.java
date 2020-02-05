@@ -34,7 +34,7 @@ public class CourseController {
 		return ResponseEntity.created(location).build();
 	}
 
-	@GetMapping("/course")
+	@GetMapping
 	public Iterable<Course> all() {
 		return courseService.listCourses();
 	}
@@ -44,7 +44,7 @@ public class CourseController {
 		this.courseService=courseService;
 	}
 
-	@DeleteMapping("/course/{name}")
+	@DeleteMapping("/{name}")
 	@Secured(value = {"ROLE_ADMIN"})
 	public Course deleteCourse(@PathVariable String name) {
 		return courseService.findCourseByName(name).map(c -> {
@@ -53,7 +53,7 @@ public class CourseController {
 				}).orElse(null);
 	}
 
-	@PutMapping("/course/{name}")
+	@PutMapping("/{name}")
 	@Secured(value = {"ROLE_ADMIN"})
 	public Course updateCourse(@PathVariable String name, @RequestBody @Valid Course newCourse) {
 		Course oldCourse = courseService.findCourseByName(name).orElse(newCourse);
@@ -62,7 +62,7 @@ public class CourseController {
 		return courseService.updateCourse(oldCourse);
 	}
 
-	@GetMapping("/course/{name}")
+	@GetMapping("/{name}")
 	public Course findCourseByName(String name) {
 		return courseService.findCourseByName(name).orElseThrow(() -> new ItemNotFoundException(name, Course.class));
 	}

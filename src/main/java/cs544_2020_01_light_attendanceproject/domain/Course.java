@@ -3,6 +3,7 @@ package cs544_2020_01_light_attendanceproject.domain;
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 public class Course {
@@ -43,4 +44,18 @@ public class Course {
         this.description = description;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Course course = (Course) o;
+        return Objects.equals(id, course.id) &&
+                Objects.equals(name, course.name) &&
+                Objects.equals(description, course.description);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, name, description);
+    }
 }
