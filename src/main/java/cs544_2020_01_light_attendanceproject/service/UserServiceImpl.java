@@ -87,10 +87,11 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     public User setUserPassword(String username, String newPassword) {
-        User user = userRepository.findUserByUsername(username).orElseThrow(() -> new UsernameNotFoundException("Invalid username."));
-
-        user.setPassword(newPassword);
-
-        return userRepository.save(user);
+        return userRepository.findUserByUsername(username).map(
+                (user) -> {
+                    user.setPassword(newPassword);
+                    return userRepository.save(user);
+                }
+        ).orElseThrow(() -> new UsernameNotFoundException("Invalid username."));
     }
 }
