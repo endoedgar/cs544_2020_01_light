@@ -1,5 +1,7 @@
 package cs544_2020_01_light_attendanceproject.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import javax.persistence.*;
 
 @Entity
@@ -11,8 +13,10 @@ public class Attendance {
     @JoinColumn(name = "barCodeId", referencedColumnName = "barCodeId")
     private User user;
     @ManyToOne
+    @JsonIgnoreProperties("attendance")
     private Session session;
     @ManyToOne
+    @JsonIgnoreProperties("location")
     private Location location;
 
     public Attendance() {}

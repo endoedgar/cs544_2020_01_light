@@ -1,20 +1,24 @@
 package cs544_2020_01_light_attendanceproject.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.hibernate.annotations.NaturalId;
 
 import javax.persistence.*;
 import javax.validation.Valid;
+import javax.validation.constraints.Email;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.Pattern;
 import java.io.Serializable;
 import java.util.Collections;
 import java.util.List;
+import java.util.Objects;
 import java.util.Set;
 
 @Entity
 public class User implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
     @NotEmpty(message = "Please provide a first name.")
     private String firstName;
     @NotEmpty(message = "Please provide a last name.")
@@ -26,23 +30,34 @@ public class User implements Serializable {
     @NotEmpty(message = "Please provide an username.")
     private String username;
     @Column(unique = true)
+    @Pattern(regexp = "^\\d{3}-[a-zA-z]{2}-[a-zA-Z]{4}$", message = "Please provide a valid bar code (pattern 000-xx-yyyy)")
     @NotEmpty(message = "Please provide a bar code.")
     private String barCodeId;
     @NotEmpty(message = "Please provide an email.")
+    @Email(message = "Please provide a valid email.")
     private String email;
     @ManyToMany
-    @NotEmpty(message = "Please at least one role.")
+    @NotEmpty(message = "Please provide at least one role.")
     private Set<Role> roles;
     @OneToMany(mappedBy = "user")
+    @JsonIgnoreProperties("user")
     private List<Attendance> attendances;
+    @ManyToMany
+    @JsonIgnoreProperties("user")
+    @JoinTable(
+            name = "user_course_offerings",
+            joinColumns = { @JoinColumn(name = "user_id") },
+            inverseJoinColumns = { @JoinColumn(name = "course_offerings_id") }
+    )
+    private List<CourseOffering> courseOfferings;
 
     public User() {}
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    private void setId(long id) {
+    private void setId(Long id) {
         this.id = id;
     }
 
@@ -116,5 +131,35 @@ public class User implements Serializable {
 
     public void setAttendances(List<Attendance> attendances) {
         this.attendances = attendances;
+    }
+
+    public List<CourseOffering> getCourseOfferings() {
+        return courseOfferings;
+    }
+
+    public void setCourseOfferings(List<CourseOffering> courseOfferings) {
+        this.courseOfferings = courseOfferings;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        User user = (User) o;
+        return enabled == user.enabled &&
+                Objects.equals(id, user.id) &&
+                Objects.equals(firstName, user.firstName) &&
+                Objects.equals(lastName, user.lastName) &&
+                Objects.equals(password, user.password) &&
+                Objects.equals(username, user.username) &&
+                Objects.equals(barCodeId, user.barCodeId) &&
+                Objects.equals(email, user.email) &&
+                Objects.equals(roles, user.roles) &&
+                Objects.equals(attendances, user.attendances);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, firstName, lastName, password, enabled, username, barCodeId, email, roles, attendances);
     }
 }

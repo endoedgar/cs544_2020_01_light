@@ -5,8 +5,11 @@ package cs544_2020_01_light_attendanceproject.controller;
 
 import javax.validation.Valid;
 
+import cs544_2020_01_light_attendanceproject.domain.User;
+import cs544_2020_01_light_attendanceproject.exceptions.ItemNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
+import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -20,6 +23,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 import cs544_2020_01_light_attendanceproject.domain.Timeslot;
 import cs544_2020_01_light_attendanceproject.service.TimeSlotService;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
+import java.net.URI;
 
 /**
  * @author Adeola Adeleke
@@ -43,9 +49,15 @@ public class TimeSlotController {
 	
 	@Secured(value = { "ROLE_ADMIN" })
     @PostMapping
-    @ResponseStatus(HttpStatus.CREATED)
-    public Timeslot newTimeSlot(@RequestBody @Valid Timeslot timeSlot) {
-        return timeSlotService.create(timeSlot);
+    public ResponseEntity<Object> newTimeSlot(@RequestBody @Valid Timeslot timeSlot) {
+	    timeSlotService.create(timeSlot);
+
+        URI locationUrl = ServletUriComponentsBuilder.fromCurrentRequest()
+                .path("/{id}")
+                .buildAndExpand(timeSlot.getAbbreviation())
+                .toUri();
+
+        return ResponseEntity.created(locationUrl).build();
     }
 
 	@Secured(value = { "ROLE_ADMIN", "ROLE_FACULTY" })
@@ -57,19 +69,26 @@ public class TimeSlotController {
 	@Secured(value = { "ROLE_ADMIN" })
     @GetMapping("/{abbr}")
     public Timeslot fetchTs(@PathVariable String abbr) {
-        return timeSlotService.get(abbr).orElse(null);
+        return timeSlotService.get(abbr).orElseThrow(() -> new ItemNotFoundException(abbr, Timeslot.class));
     }
 
 	@Secured(value = { "ROLE_ADMIN" })
     @DeleteMapping("/{abbr}")
-    public void deleteTs(@PathVariable String abbr) {
-        timeSlotService.delete(abbr);
+    public Timeslot deleteTs(@PathVariable String abbr) {
+	    return timeSlotService.get(abbr).map(ts -> {
+            timeSlotService.delete(ts);
+            return ts;
+        }).orElse(null);
     }
 
 	@Secured(value = { "ROLE_ADMIN" })
     @PutMapping("/{abbr}")
     public Timeslot updateTs(@RequestBody @Valid Timeslot newTs, @PathVariable String abbr) {
-        return timeSlotService.update(newTs);
+	    Timeslot oldTimeslot = timeSlotService.get(abbr).orElse(newTs);
+	    oldTimeslot.setBeginTime(newTs.getBeginTime());
+	    oldTimeslot.setDescription(newTs.getDescription());
+	    oldTimeslot.setEndTime(newTs.getEndTime());
+        return timeSlotService.update(oldTimeslot);
     }
 	
 	

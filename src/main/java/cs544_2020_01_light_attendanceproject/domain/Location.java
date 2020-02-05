@@ -1,24 +1,36 @@
 package cs544_2020_01_light_attendanceproject.domain;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
+import javax.validation.constraints.NotEmpty;
+import java.util.List;
+import java.util.Objects;
 
 @Entity
 public class Location {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
+    @NotEmpty(message = "Please provide a description.")
     private String description;
 
+    @OneToMany(mappedBy = "location", cascade = CascadeType.ALL)
+    private List<Attendance> attendances;
+
+    @OneToMany(mappedBy = "location", cascade = CascadeType.ALL)
+    private List<CourseOffering> courseOfferings;
+
     public Location() { }
+
+    public Location(Long id, String description) {
+        this.id = id;
+        this.description = description;
+    }
 
     public long getId() {
         return id;
     }
 
-    private void setId(long id) {
+    private void setId(Long id) {
         this.id = id;
     }
 
@@ -28,5 +40,35 @@ public class Location {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public List<Attendance> getAttendances() {
+        return attendances;
+    }
+
+    public void setAttendances(List<Attendance> attendances) {
+        this.attendances = attendances;
+    }
+
+    public List<CourseOffering> getCourseOfferings() {
+        return courseOfferings;
+    }
+
+    public void setCourseOfferings(List<CourseOffering> courseOfferings) {
+        this.courseOfferings = courseOfferings;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Location location = (Location) o;
+        return Objects.equals(id, location.id) &&
+                Objects.equals(description, location.description);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, description);
     }
 }

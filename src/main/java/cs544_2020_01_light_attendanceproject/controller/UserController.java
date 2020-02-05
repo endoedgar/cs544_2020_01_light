@@ -36,10 +36,9 @@ public class UserController {
     }
 
     @Secured(value = {"ROLE_ADMIN"})
-    @PostMapping("")
-    @ResponseStatus(HttpStatus.CREATED)
+    @PostMapping
     public ResponseEntity<Object> newUser(@RequestBody @Valid User user) {
-        userService.registerNewUserAccount(user);
+        userService.saveUser(user);
 
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
@@ -50,7 +49,7 @@ public class UserController {
     }
 
     @Secured(value = {"ROLE_ADMIN"})
-    @GetMapping("")
+    @GetMapping
     public Iterable<User> all() {
         return userService.listUsers();
     }
@@ -58,22 +57,36 @@ public class UserController {
     @Secured(value = {"ROLE_ADMIN","ROLE_FACULTY","ROLE_STUDENT"})
     @GetMapping("/{username}")
     public User one(@PathVariable String username) {
-        return userService.findOneUser(username).orElseThrow(() -> new ItemNotFoundException(username, User.class));
+        return userService.findUserByUsername(username).orElseThrow(() -> new ItemNotFoundException(username, User.class));
     }
 
     @Secured(value = {"ROLE_ADMIN"})
     @DeleteMapping("/{username}")
-    public void deleteUser(@PathVariable String username) {
+    public User deleteUser(@PathVariable String username) {
         String currentUsername = SecurityContextHolder.getContext().getAuthentication().getName();
         if(username.equals(currentUsername))
             throw new AdminsCannotDeleteThemselvesException(username);
-        userService.deleteByUsername(username);
+        User user = userService.findUserByUsername(username).map( u -> {
+            userService.deleteUser(u);
+            return u;
+        }).orElse(null);
+
+        return user;
     }
 
     @Secured(value = {"ROLE_ADMIN"})
     @PutMapping("/{username}")
     public User replaceUser(@RequestBody @Valid User newUser, @PathVariable String username) {
-        return userService.replaceUser(newUser, username);
+        User oldUser = userService.findUserByUsername(username).orElse(newUser);
+        oldUser.setAttendances(newUser.getAttendances());
+        oldUser.setRoles(newUser.getRoles());
+        oldUser.setBarCodeId(newUser.getBarCodeId());
+        oldUser.setEmail(newUser.getEmail());
+        oldUser.setEnabled(newUser.isEnabled());
+        oldUser.setPassword(newUser.getPassword());
+        oldUser.setFirstName(newUser.getFirstName());
+        oldUser.setLastName(newUser.getLastName());
+        return userService.updateUser(oldUser);
     }
     
     

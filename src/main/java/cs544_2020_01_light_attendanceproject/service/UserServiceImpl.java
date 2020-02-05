@@ -7,9 +7,11 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.validation.Valid;
+import javax.validation.ValidationException;
 import java.util.HashSet;
 import java.util.Optional;
 
@@ -23,64 +25,51 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @Transactional
-    public User findUserByUsername(String username) throws UsernameNotFoundException {
-        Optional<User> user = userRepository.findUserByUsername(username);
+    @Transactional(readOnly = true)
+    public Optional<User> findUserByUsername(String username) {
+        return userRepository.findUserByUsername(username);
+    }
 
-        user.orElseThrow(() -> new UsernameNotFoundException("Invalid username or password."));
-        return user.get();
+    @Transactional(readOnly = true)
+    public void validateUniqueUserFields(@Valid User account) {
+        if (userRepository.existsUserByUsernameAndIdIsNot(account.getUsername(), account.getId())) {
+            throw new ValidationException("Username " + account.getUsername() + " is already taken.");
+        }
+        if (userRepository.existsUserByBarCodeIdAndIdIsNot(account.getBarCodeId(), account.getId())) {
+            throw new ValidationException("Barcode " + account.getBarCodeId() + " is already taken.");
+        }
     }
 
     @Transactional
     @Override
-    public User registerNewUserAccount(@Valid User account) {
+    public User saveUser(@Valid User account) {
+        validateUniqueUserFields(account);
         return userRepository.save(account);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public Iterable<User> listUsers() {
         return userRepository.findAll();
     }
 
     @Transactional
-    public Optional<User> findOneUser(Long id) { return userRepository.findById(id); }
-
-    @Transactional
-    public Optional<User> findOneUser(String username) { return userRepository.findUserByUsername(username); }
-
-    @Transactional
-    public void deleteById(Long id) {
-        userRepository.deleteById(id);
+    public void deleteUser(User user) {
+        userRepository.delete(user);
     }
 
     @Transactional
-    public void deleteByUsername(String username) {
-        userRepository.deleteUserByUsername(username);
-    }
-
-    @Transactional
-    public User replaceUser(@Valid User newUser, String username) {
-        return userRepository.findUserByUsername(username).map(user -> {
-            user.setBarCodeId(newUser.getBarCodeId());
-            user.setEmail(newUser.getEmail());
-            user.setEnabled(newUser.isEnabled());
-            user.setFirstName(newUser.getFirstName());
-            user.setLastName(newUser.getLastName());
-            user.setPassword(newUser.getPassword());
-            user.setRoles(new HashSet<>(newUser.getRoles()));
-            return userRepository.save(user);
-        }).orElseGet(() -> {
-            newUser.setUsername(username);
-            return userRepository.save(newUser);
-        });
+    public User updateUser(@Valid User newUser) {
+        validateUniqueUserFields(newUser);
+        return userRepository.save(newUser);
     }
 
     @Transactional
     public User setUserPassword(String username, String newPassword) {
-        User user = userRepository.findUserByUsername(username).orElseThrow(() -> new UsernameNotFoundException("Invalid username."));
-
-        user.setPassword(newPassword);
-
-        return userRepository.save(user);
+        return userRepository.findUserByUsername(username).map(
+                (user) -> {
+                    user.setPassword(newPassword);
+                    return userRepository.save(user);
+                }
+        ).orElseThrow(() -> new UsernameNotFoundException("Invalid username."));
     }
 }

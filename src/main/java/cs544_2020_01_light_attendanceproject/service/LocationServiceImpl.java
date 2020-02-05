@@ -24,8 +24,8 @@ public class LocationServiceImpl implements LocationService {
 	}
 
 	@Override
-	public Location findLocationByDescription(String description) throws ObjectNotFoundException {
-		return locationDAO.findByDescription(description).get();
+	public Optional<Location> findLocationByDescription(String description) throws ObjectNotFoundException {
+		return locationDAO.findByDescription(description);
 	}
 
 	@Override
