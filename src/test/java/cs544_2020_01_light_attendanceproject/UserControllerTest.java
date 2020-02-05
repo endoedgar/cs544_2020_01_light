@@ -9,6 +9,7 @@ import cs544_2020_01_light_attendanceproject.controller.UserController;
 import cs544_2020_01_light_attendanceproject.dao.UserRepository;
 import cs544_2020_01_light_attendanceproject.domain.User;
 import cs544_2020_01_light_attendanceproject.exceptions.AdminsCannotDeleteThemselvesException;
+import cs544_2020_01_light_attendanceproject.exceptions.UserNotFoundException;
 import cs544_2020_01_light_attendanceproject.service.UserService;
 import net.bytebuddy.implementation.bytecode.Throw;
 import org.junit.jupiter.api.Assertions;
@@ -30,6 +31,7 @@ import org.springframework.web.context.request.ServletRequestAttributes;
 import java.util.ArrayList;
 import java.util.Iterator;
 import java.util.List;
+import java.util.Optional;
 
 @ExtendWith(MockitoExtension.class)
 public class UserControllerTest {
@@ -135,5 +137,23 @@ public class UserControllerTest {
         assertThat(iterator.next().getFirstName()).isEqualTo("Mock user firstname");
         assertThat(iterator.next().getFirstName()).isEqualTo("Mock user 2 firstname");
         assertThat(iterator.hasNext()).isFalse();
+    }
+
+    @Test
+    public void testFindExistingUser() {
+        when(userService.findOneUser("mockuser2")).thenReturn(Optional.of(listOfMockUsers.get(1)));
+
+        User user = userController.one("mockuser2");
+
+        assertThat(user.getUsername()).isEqualTo("mockuser2");
+    }
+
+    @Test
+    public void testFindNonExistingUser() {
+        when(userService.findOneUser(any(String.class))).thenReturn(Optional.ofNullable(null));
+
+        Assertions.assertThrows(UserNotFoundException.class, () -> {
+            userController.one("nonExistingUser");
+        });
     }
 }
