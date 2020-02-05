@@ -8,13 +8,10 @@ import javax.validation.Valid;
 import java.util.Optional;
 
 public interface UserService {
-    public User findUserByUsername(String username);
+    public Optional<User> findUserByUsername(String username);
     public User save(User account);
     public Iterable<User> listUsers();
-    public Optional<User> findOneUser(Long id);
-    public Optional<User> findOneUser(String username);
-    public void deleteById(Long id);
-    public void deleteByUsername(String username);
+    public void deleteUser(User user);
     public User replaceUser(User user);
     public User setUserPassword(String username, String newPassword);
 }

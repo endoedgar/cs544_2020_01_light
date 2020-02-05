@@ -36,7 +36,7 @@ public class User implements Serializable {
     @Email(message = "Please provide a valid email.")
     private String email;
     @ManyToMany
-    @NotEmpty(message = "Please at least one role.")
+    @NotEmpty(message = "Please provide at least one role.")
     private Set<Role> roles;
     @OneToMany(mappedBy = "user")
     private List<Attendance> attendances;

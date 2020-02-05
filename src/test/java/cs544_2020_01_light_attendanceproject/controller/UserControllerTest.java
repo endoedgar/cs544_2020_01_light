@@ -1,11 +1,13 @@
 package cs544_2020_01_light_attendanceproject.controller;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.contentOf;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 import com.fasterxml.jackson.core.type.TypeReference;
+import com.fasterxml.jackson.databind.DeserializationFeature;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import cs544_2020_01_light_attendanceproject.domain.Role;
 import cs544_2020_01_light_attendanceproject.domain.User;
@@ -121,12 +123,34 @@ public class UserControllerTest {
 
     @Test
     @WithMockUser(value = "admin",roles={"ADMIN"})
-    void deleteNormalUser() throws Exception {
+    void deleteNonExistingUser() throws Exception {
+        when(userService.findUserByUsername("nonExistingUser")).thenReturn(Optional.empty());
+
         mockMvc.perform(MockMvcRequestBuilders
+                .delete("/user/nonExistingUser")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+        ).andExpect(MockMvcResultMatchers.status().isOk())
+                .andExpect(MockMvcResultMatchers.content().string(""));
+    }
+
+    @Test
+    @WithMockUser(value = "admin",roles={"ADMIN"})
+    void deleteNormalUser() throws Exception {
+        when(userService.findUserByUsername("mockuser")).thenReturn(Optional.of(listOfMockUsers.get(0)));
+
+        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders
                 .delete("/user/mockuser")
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
-        ).andExpect(MockMvcResultMatchers.status().isOk());
+        ).andExpect(MockMvcResultMatchers.status().isOk())
+                .andReturn();
+
+        User returnedUser = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), User.class);
+
+        assertThat(returnedUser).isInstanceOf(User.class);
+        assertThat(returnedUser).isNotNull();
+        assertThat(returnedUser).isEqualTo(listOfMockUsers.get(0));
     }
 
     @Test
@@ -159,7 +183,7 @@ public class UserControllerTest {
     @Test
     @WithMockUser(value = "admin",roles={"ADMIN"})
     void testFindExistingUser() throws Exception {
-        when(userService.findOneUser("mockuser2")).thenReturn(Optional.of(listOfMockUsers.get(1)));
+        when(userService.findUserByUsername("mockuser2")).thenReturn(Optional.of(listOfMockUsers.get(1)));
 
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders
                 .get("/user/mockuser2")
@@ -176,7 +200,7 @@ public class UserControllerTest {
     @Test
     @WithMockUser(value = "admin",roles={"ADMIN"})
     void testFindNonExistingUser() throws Exception {
-        when(userService.findOneUser(any(String.class))).thenReturn(Optional.empty());
+        when(userService.findUserByUsername(any(String.class))).thenReturn(Optional.empty());
 
         mockMvc.perform(MockMvcRequestBuilders
                 .get("/user/nonExistingUser")

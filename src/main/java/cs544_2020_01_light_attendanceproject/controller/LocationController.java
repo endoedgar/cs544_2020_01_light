@@ -63,12 +63,14 @@ public class LocationController {
 		return locationService.updateLocation(oldLocation);
 	}
 
-	@DeleteMapping("/locations/{id}")
+	@DeleteMapping("/{id}")
 	@ResponseStatus(HttpStatus.OK)
 	public Location deleteLocation(@PathVariable long id) {
-		Location oldLocation = locationService.findLocationById(id).get();
-		locationService.deleteLocation(oldLocation);
-		return oldLocation;
+		return locationService.findLocationById(id).
+				map(l -> {
+					locationService.deleteLocation(l);
+					return l;
+				}).orElse(null);
 	}
 
 }

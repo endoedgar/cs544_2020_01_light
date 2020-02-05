@@ -25,10 +25,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Override
-    @Transactional
-    public User findUserByUsername(String username) throws UsernameNotFoundException {
-        return userRepository.findUserByUsername(username)
-                .orElseThrow(() -> new UsernameNotFoundException("Invalid username or password."));
+    @Transactional(readOnly = true)
+    public Optional<User> findUserByUsername(String username) {
+        return userRepository.findUserByUsername(username);
     }
 
     @Transactional(readOnly = true)
@@ -53,20 +52,9 @@ public class UserServiceImpl implements UserService {
         return userRepository.findAll();
     }
 
-    @Transactional(readOnly = true)
-    public Optional<User> findOneUser(Long id) { return userRepository.findById(id); }
-
-    @Transactional(readOnly = true)
-    public Optional<User> findOneUser(String username) { return userRepository.findUserByUsername(username); }
-
     @Transactional
-    public void deleteById(Long id) {
-        userRepository.deleteById(id);
-    }
-
-    @Transactional
-    public void deleteByUsername(String username) {
-        userRepository.deleteUserByUsername(username);
+    public void deleteUser(User user) {
+        userRepository.delete(user);
     }
 
     @Transactional

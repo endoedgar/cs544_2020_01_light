@@ -142,5 +142,19 @@ class LocationControllerTest {
     @Test
     @WithMockUser(value = "admin",roles={"ADMIN"})
     void deleteLocation() throws Exception {
+        when(locationService.findLocationById(1L)).thenReturn(Optional.of(listOfMockedLocations.get(0)));
+
+        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders
+                .delete("/locations/1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+        ).andExpect(MockMvcResultMatchers.status().isOk())
+                .andReturn();
+
+        Location returnedLocation = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), Location.class);
+
+        assertThat(returnedLocation).isInstanceOf(Location.class);
+        assertThat(returnedLocation).isNotNull();
+        assertThat(returnedLocation).isEqualTo(listOfMockedLocations.get(0));
     }
 }
