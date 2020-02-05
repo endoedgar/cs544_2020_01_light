@@ -49,13 +49,17 @@ public class UserServiceImpl implements UserService {
     public Optional<User> findOneUser(String username) { return userRepository.findUserByUsername(username); }
 
     @Transactional
-    public void deleteById(Long id) { userRepository.deleteById(id); }
+    public void deleteById(Long id) {
+        userRepository.deleteById(id);
+    }
 
     @Transactional
-    public void deleteByUsername(String username) { userRepository.deleteUserByUsername(username); }
+    public void deleteByUsername(String username) {
+        userRepository.deleteUserByUsername(username);
+    }
 
     @Transactional
-    public User replaceUser(User newUser, String username) {
+    public User replaceUser(@Valid User newUser, String username) {
         return userRepository.findUserByUsername(username).map(user -> {
             user.setBarCodeId(newUser.getBarCodeId());
             user.setEmail(newUser.getEmail());
