@@ -1,10 +1,12 @@
 package cs544_2020_01_light_attendanceproject.service;
 
+import java.util.Optional;
+
 import cs544_2020_01_light_attendanceproject.domain.Location;
 
 public interface LocationService {
 
-	public Location findLocationById(long id);
+	public Optional<Location> findLocationById(long id);
 
 	public Location findLocationByDescription(String description);
 
