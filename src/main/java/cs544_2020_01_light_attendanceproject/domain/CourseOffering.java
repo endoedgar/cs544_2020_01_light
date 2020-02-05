@@ -1,5 +1,6 @@
 package cs544_2020_01_light_attendanceproject.domain;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.hibernate.annotations.Fetch;
 import org.springframework.context.annotation.Lazy;
@@ -22,9 +23,11 @@ public class CourseOffering {
     @NotNull(message = "please specify a course")
     private Course course;
     @Temporal(TemporalType.DATE)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone="CST")
     @NotNull(message = "please specify startDate")
     private Date startDate;
     @Temporal(TemporalType.DATE)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone="CST")
     @NotNull(message = "please specify endDate")
     private Date endDate;
     @JsonIgnoreProperties("courseOffering")

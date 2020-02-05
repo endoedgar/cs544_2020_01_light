@@ -20,4 +20,8 @@ REPLACE INTO timeslot (abbreviation, description, begin_time, end_time) VALUES
 
 REPLACE INTO course_offering(id, course_id, start_date, end_date) VALUES
 (1, 1, "2020-05-01", "2020-06-01"),
-(2, 2, "2020-06-01", "2020-06-01")
+(2, 2, "2020-06-01", "2020-06-01");
+
+REPLACE INTO `session`(id, course_offering_id, timeslot_abbreviation, `date`) VALUES
+(1, 1, "AM", "2020-05-10"),
+(2, 1, "AM", "2020-05-11");

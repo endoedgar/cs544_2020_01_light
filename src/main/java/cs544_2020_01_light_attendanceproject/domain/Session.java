@@ -1,5 +1,7 @@
 package cs544_2020_01_light_attendanceproject.domain;
 
+import com.fasterxml.jackson.annotation.JsonFormat;
+
 import javax.persistence.*;
 import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
@@ -16,7 +18,8 @@ public class Session {
     private CourseOffering courseOffering;
     @ManyToOne
     private Timeslot timeslot;
-    @Temporal(TemporalType.TIMESTAMP)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone="CST")
+    @Temporal(TemporalType.DATE)
     private Date date;
 
     public Session() {}
