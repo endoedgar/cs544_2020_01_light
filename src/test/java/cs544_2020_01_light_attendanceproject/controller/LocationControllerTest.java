@@ -5,7 +5,6 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import cs544_2020_01_light_attendanceproject.domain.Location;
 import static org.assertj.core.api.Assertions.assertThat;
 
-import cs544_2020_01_light_attendanceproject.domain.User;
 import cs544_2020_01_light_attendanceproject.service.LocationService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -25,7 +24,6 @@ import java.util.List;
 import java.util.Optional;
 
 import static org.mockito.ArgumentMatchers.any;
-import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -44,7 +42,7 @@ class LocationControllerTest {
             new Location(1L, "Location A"),
             new Location(2L, "Location B"),
             new Location(3L, "Location C")
-    );;
+    );
 
     public static String asJsonString(final Object obj) {
         try {

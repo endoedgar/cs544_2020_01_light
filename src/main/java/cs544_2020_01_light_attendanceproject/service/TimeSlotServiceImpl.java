@@ -58,9 +58,9 @@ public class TimeSlotServiceImpl implements TimeSlotService {
 	}
 
 	@Override
-	public void delete(String abbr) {
+	public void delete(Timeslot timeslot) {
 		// TODO Auto-generated method stub
-		tsRepository.deleteById(abbr);
+		tsRepository.delete(timeslot);
 		
 	}
 

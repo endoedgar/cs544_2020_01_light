@@ -4,29 +4,36 @@ import javax.persistence.Entity;
 import javax.persistence.Id;
 import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
+import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import org.springframework.format.annotation.DateTimeFormat;
 
 import java.sql.Time;
+import java.time.LocalDateTime;
+import java.time.LocalTime;
 import java.util.Date;
+import java.util.Objects;
 
 @Entity
 public class Timeslot {
     @Id
     private String abbreviation;
+    @NotEmpty(message = "Please provide a description.")
     private String description;
-    
+
     @Temporal(TemporalType.TIME)
-    @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="HH:mm", timezone="CST")
-    private Date beginTime;
+    @NotNull(message = "Please provide a start time.")
+    private LocalTime beginTime;
     @Temporal(TemporalType.TIME)
-    @JsonFormat(shape=JsonFormat.Shape.STRING, pattern="HH:mm", timezone="CST")
-    private Date endTime;
+    @NotNull(message = "Please provide an end time.")
+    private LocalTime endTime;
 
     public Timeslot() {
     }
 
-    public Timeslot(String abbreviation, String description, Date beginTime, Date endTime) {
+    public Timeslot(String abbreviation, String description, LocalTime beginTime, LocalTime endTime) {
         this.abbreviation = abbreviation;
         this.description = description;
         this.beginTime = beginTime;
@@ -49,19 +56,35 @@ public class Timeslot {
         this.description = description;
     }
 
-    public Date getBeginTime() {
+    public LocalTime getBeginTime() {
         return beginTime;
     }
 
-    public void setBeginTime(Date beginTime) {
+    public void setBeginTime(LocalTime beginTime) {
         this.beginTime = beginTime;
     }
 
-    public Date getEndTime() {
+    public LocalTime getEndTime() {
         return endTime;
     }
 
-    public void setEndTime(Date endTime) {
+    public void setEndTime(LocalTime endTime) {
         this.endTime = endTime;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Timeslot timeslot = (Timeslot) o;
+        return Objects.equals(abbreviation, timeslot.abbreviation) &&
+                Objects.equals(description, timeslot.description) &&
+                Objects.equals(beginTime, timeslot.beginTime) &&
+                Objects.equals(endTime, timeslot.endTime);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(abbreviation, description, beginTime, endTime);
     }
 }

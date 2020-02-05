@@ -19,5 +19,5 @@ public interface TimeSlotService {
 	public Iterable<Timeslot> getAll();
 	public Timeslot create(Timeslot tm);
 	public Timeslot update(Timeslot tm);
-	public void delete(String abbr);
+	public void delete(Timeslot tm);
 }
