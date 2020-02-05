@@ -8,17 +8,22 @@ import java.util.List;
 public class Course {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
+    @NotEmpty(message = "Please provide a name;")
     private String name;
-
+    @NotEmpty(message = "Please provide a description;")
     private String description;
     public Course() {}
+    public Course(Long id, String name) {
+        this.id = id;
+        this.name = name;
+    }
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    private void setId(long id) {
+    private void setId(Long id) {
         this.id = id;
     }
 
