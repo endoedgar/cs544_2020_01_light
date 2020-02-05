@@ -8,7 +8,7 @@ public interface LocationService {
 
 	public Optional<Location> findLocationById(long id);
 
-	public Location findLocationByDescription(String description);
+	public Optional<Location> findLocationByDescription(String description);
 
 	public Iterable<Location> findAllLocations();
 

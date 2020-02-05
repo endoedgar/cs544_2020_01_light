@@ -5,8 +5,8 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
+import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import cs544_2020_01_light_attendanceproject.controller.UserController;
 import cs544_2020_01_light_attendanceproject.domain.Role;
 import cs544_2020_01_light_attendanceproject.domain.User;
 import cs544_2020_01_light_attendanceproject.service.UserService;
@@ -36,11 +36,11 @@ public class UserControllerTest {
     UserService userService;
 
     @Autowired
-    private ObjectMapper objectMapper;
+    ObjectMapper objectMapper;
 
     static List<User> listOfMockUsers;
 
-    public static String asJsonString(final Object obj) {
+    static String asJsonString(final Object obj) {
         try {
             return new ObjectMapper().writeValueAsString(obj);
         } catch (Exception e) {
@@ -49,7 +49,7 @@ public class UserControllerTest {
     }
 
     @BeforeAll
-    public static void beforeAll() {
+    static void beforeAll() {
         listOfMockUsers = new ArrayList<>();
 
         Set<Role> roles1 = new HashSet<>();
@@ -87,7 +87,7 @@ public class UserControllerTest {
 
     @Test
     @WithMockUser(value = "admin",roles={"ADMIN"})
-    public void addUser() throws Exception
+    void addUser() throws Exception
     {
         mockMvc.perform(MockMvcRequestBuilders
                 .post("/user")
@@ -100,9 +100,9 @@ public class UserControllerTest {
 
     @Test
     @WithMockUser(value = "admin",roles={"ADMIN"})
-    public void updateUserExistingUser() throws Exception {
-        when(userService.replaceUser(any(User.class), any(String.class))).thenReturn(null);
-        when(userService.replaceUser(any(User.class), eq("mockuser"))).thenReturn(listOfMockUsers.get(0));
+    void updateUserExistingUser() throws Exception {
+        when(userService.replaceUser(any(User.class))).thenReturn(null);
+        when(userService.replaceUser(listOfMockUsers.get(0))).thenReturn(listOfMockUsers.get(0));
 
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders
                 .put("/user/mockuser")
@@ -121,7 +121,7 @@ public class UserControllerTest {
 
     @Test
     @WithMockUser(value = "admin",roles={"ADMIN"})
-    public void deleteNormalUser() throws Exception {
+    void deleteNormalUser() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders
                 .delete("/user/mockuser")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -131,7 +131,7 @@ public class UserControllerTest {
 
     @Test
     @WithMockUser(value = "admin",roles={"ADMIN"})
-    public void deleteYourself() throws Exception {
+    void deleteYourself() throws Exception {
         mockMvc.perform(MockMvcRequestBuilders
                 .delete("/user/admin")
                 .contentType(MediaType.APPLICATION_JSON)
@@ -141,7 +141,7 @@ public class UserControllerTest {
 
     @Test
     @WithMockUser(value = "admin",roles={"ADMIN"})
-    public void testFindAll() throws Exception{
+    void testFindAll() throws Exception{
         when(userService.listUsers()).thenReturn(listOfMockUsers);
 
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders
@@ -151,14 +151,14 @@ public class UserControllerTest {
         ).andExpect(MockMvcResultMatchers.status().isOk())
         .andReturn();
 
-        List<User> returnedListOfUsers = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), List.class);
+        List<User> returnedListOfUsers = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), new TypeReference<List<User>>() {});
 
-        assertThat(returnedListOfUsers.equals(listOfMockUsers));
+        assertThat(returnedListOfUsers).isEqualTo(listOfMockUsers);
     }
 
     @Test
     @WithMockUser(value = "admin",roles={"ADMIN"})
-    public void testFindExistingUser() throws Exception {
+    void testFindExistingUser() throws Exception {
         when(userService.findOneUser("mockuser2")).thenReturn(Optional.of(listOfMockUsers.get(1)));
 
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders
@@ -170,12 +170,12 @@ public class UserControllerTest {
 
         User returnedUser = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), User.class);
 
-        assertThat(returnedUser.equals(listOfMockUsers.get(1)));
+        assertThat(returnedUser).isEqualTo(listOfMockUsers.get(1));
     }
 
     @Test
     @WithMockUser(value = "admin",roles={"ADMIN"})
-    public void testFindNonExistingUser() throws Exception {
+    void testFindNonExistingUser() throws Exception {
         when(userService.findOneUser(any(String.class))).thenReturn(Optional.empty());
 
         mockMvc.perform(MockMvcRequestBuilders

@@ -37,7 +37,6 @@ public class UserController {
 
     @Secured(value = {"ROLE_ADMIN"})
     @PostMapping("")
-    @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<Object> newUser(@RequestBody @Valid User user) {
         userService.save(user);
 
@@ -73,8 +72,16 @@ public class UserController {
     @Secured(value = {"ROLE_ADMIN"})
     @PutMapping("/{username}")
     public User replaceUser(@RequestBody @Valid User newUser, @PathVariable String username) {
-        User returnUser = userService.replaceUser(newUser, username);
-        return returnUser;
+        User oldUser = userService.findOneUser(username).orElse(newUser);
+        oldUser.setAttendances(newUser.getAttendances());
+        oldUser.setRoles(newUser.getRoles());
+        oldUser.setBarCodeId(newUser.getBarCodeId());
+        oldUser.setEmail(newUser.getEmail());
+        oldUser.setEnabled(newUser.isEnabled());
+        oldUser.setPassword(newUser.getPassword());
+        oldUser.setFirstName(newUser.getFirstName());
+        oldUser.setLastName(newUser.getLastName());
+        return userService.replaceUser(oldUser);
     }
     
     

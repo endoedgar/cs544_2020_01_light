@@ -70,18 +70,9 @@ public class UserServiceImpl implements UserService {
     }
 
     @Transactional
-    public User replaceUser(@Valid User newUser, String username) {
+    public User replaceUser(@Valid User newUser) {
         validateUniqueUserFields(newUser);
-        return userRepository.findUserByUsername(username).map(user -> {
-            user.setBarCodeId(newUser.getBarCodeId());
-            user.setEmail(newUser.getEmail());
-            user.setEnabled(newUser.isEnabled());
-            user.setFirstName(newUser.getFirstName());
-            user.setLastName(newUser.getLastName());
-            user.setPassword(newUser.getPassword());
-            user.setRoles(new HashSet<>(newUser.getRoles()));
-            return this.save(user);
-        }).orElseGet(() -> userRepository.save(newUser));
+        return userRepository.save(newUser);
     }
 
     @Transactional
