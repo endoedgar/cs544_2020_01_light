@@ -9,9 +9,9 @@ import java.util.Optional;
 
 public interface UserService {
     public Optional<User> findUserByUsername(String username);
-    public User save(User account);
+    public User saveUser(User account);
     public Iterable<User> listUsers();
     public void deleteUser(User user);
-    public User replaceUser(User user);
+    public User updateUser(User user);
     public User setUserPassword(String username, String newPassword);
 }

@@ -15,43 +15,39 @@ import cs544_2020_01_light_attendanceproject.domain.Course;
 
 @Service
 public class CourseServiceImpl implements CourseService {
+	private CourseRepository courseRepository;
+
 	@Autowired
-	 private CourseRepository CourseRepository;
+	public CourseServiceImpl(CourseRepository courseRepository) {
+		this.courseRepository = courseRepository;
+	}
 	 
 	@Override
-	@Transactional
-	public Course findCourseByName(String name) {
-	       Optional<Course>course = CourseRepository.findByName(name);
-	       return  course.get();
+	@Transactional(readOnly = true)
+	public Optional<Course> findCourseByName(String name) {
+		return courseRepository.findByName(name);
 	}
 
 	@Override
-	public Course addNewCourse(@Valid Course course) {
-		return CourseRepository.save(course);
+	public Course saveCourse(@Valid Course course) {
+		return courseRepository.save(course);
 	}
 
 	@Override
 	public void deleteCourse(Course course) {
-		CourseRepository.delete(course);
+		courseRepository.delete(course);
 		
 	}
 
 	@Override
-	public Course replaceCourse(String name , Course course) {
-		return CourseRepository.findByName(name).map(Course->{
-			Course.setDescription(course.getDescription());
-			Course.setName(course.getName());
-			return CourseRepository.save(course);
-		}).orElseGet(()->{
-			course.setName(name);
-		
-
-		return CourseRepository.save(course);
-	});}
+	public Course updateCourse(Course course) {
+		return courseRepository.save(course);
+	}
 
 	@Override
-	public Iterable<Course> listCourse() {
-		return CourseRepository.findAll();
+	@Transactional(readOnly = true)
+	public Iterable<Course> listCourses() {
+		return courseRepository.findAll();
 	}
 
 

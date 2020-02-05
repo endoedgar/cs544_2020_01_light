@@ -2,59 +2,68 @@ package cs544_2020_01_light_attendanceproject.controller;
 
 import javax.validation.Valid;
 
+import cs544_2020_01_light_attendanceproject.domain.User;
+import cs544_2020_01_light_attendanceproject.exceptions.ItemNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
-import org.springframework.web.bind.annotation.DeleteMapping;
-import org.springframework.web.bind.annotation.GetMapping;
-import org.springframework.web.bind.annotation.PathVariable;
-import org.springframework.web.bind.annotation.PostMapping;
-import org.springframework.web.bind.annotation.PutMapping;
-import org.springframework.web.bind.annotation.RequestBody;
-import org.springframework.web.bind.annotation.ResponseStatus;
-import org.springframework.web.bind.annotation.RestController;
+import org.springframework.http.ResponseEntity;
+import org.springframework.security.access.annotation.Secured;
+import org.springframework.web.bind.annotation.*;
 
 import cs544_2020_01_light_attendanceproject.domain.Course;
 import cs544_2020_01_light_attendanceproject.service.CourseService;
+import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
+
+import java.net.URI;
 
 @RestController
+@RequestMapping("/course")
 public class CourseController {
-
 	private CourseService courseService;
-	
-	
-	
 
-	@PutMapping("/course")
-	@ResponseStatus(HttpStatus.CREATED)
-	public Course addNewCourse(@RequestBody @Valid Course course) {
-		return courseService.addNewCourse(course);
+	@PostMapping
+	@Secured(value = {"ROLE_ADMIN"})
+	public ResponseEntity<Object> addNewCourse(@RequestBody @Valid Course course) {
+		courseService.saveCourse(course);
+
+		URI location = ServletUriComponentsBuilder.fromCurrentRequest()
+				.path("/{id}")
+				.buildAndExpand(course.getName())
+				.toUri();
+
+		return ResponseEntity.created(location).build();
 	}
 
 	@GetMapping("/course")
 	public Iterable<Course> all() {
-		return courseService.listCourse();
+		return courseService.listCourses();
 	}
 
+	@Autowired
 	public CourseController(CourseService courseService) {
 		this.courseService=courseService;
-		
 	}
 
 	@DeleteMapping("/course/{name}")
-	public void deleteCourse(@PathVariable String name) {
-		Course course= courseService.findCourseByName(name);
-		
-		courseService.deleteCourse(course);
+	@Secured(value = {"ROLE_ADMIN"})
+	public Course deleteCourse(@PathVariable String name) {
+		return courseService.findCourseByName(name).map(c -> {
+					courseService.deleteCourse(c);
+					return c;
+				}).orElse(null);
 	}
 
 	@PutMapping("/course/{name}")
-	public Course replaceCourse(String name, Course course) {
-		return courseService.replaceCourse(name, course);
+	@Secured(value = {"ROLE_ADMIN"})
+	public Course updateCourse(@PathVariable String name, @RequestBody @Valid Course newCourse) {
+		Course oldCourse = courseService.findCourseByName(name).orElse(newCourse);
+		oldCourse.setName(newCourse.getName());
+		oldCourse.setDescription(newCourse.getDescription());
+		return courseService.updateCourse(oldCourse);
 	}
 
 	@GetMapping("/course/{name}")
 	public Course findCourseByName(String name) {
-		return courseService.findCourseByName(name);
+		return courseService.findCourseByName(name).orElseThrow(() -> new ItemNotFoundException(name, Course.class));
 	}
-
 }

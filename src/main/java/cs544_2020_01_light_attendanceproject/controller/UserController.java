@@ -36,9 +36,9 @@ public class UserController {
     }
 
     @Secured(value = {"ROLE_ADMIN"})
-    @PostMapping("")
+    @PostMapping
     public ResponseEntity<Object> newUser(@RequestBody @Valid User user) {
-        userService.save(user);
+        userService.saveUser(user);
 
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")
@@ -49,7 +49,7 @@ public class UserController {
     }
 
     @Secured(value = {"ROLE_ADMIN"})
-    @GetMapping("")
+    @GetMapping
     public Iterable<User> all() {
         return userService.listUsers();
     }
@@ -86,7 +86,7 @@ public class UserController {
         oldUser.setPassword(newUser.getPassword());
         oldUser.setFirstName(newUser.getFirstName());
         oldUser.setLastName(newUser.getLastName());
-        return userService.replaceUser(oldUser);
+        return userService.updateUser(oldUser);
     }
     
     

@@ -103,8 +103,8 @@ public class UserControllerTest {
     @Test
     @WithMockUser(value = "admin",roles={"ADMIN"})
     void updateUserExistingUser() throws Exception {
-        when(userService.replaceUser(any(User.class))).thenReturn(null);
-        when(userService.replaceUser(listOfMockUsers.get(0))).thenReturn(listOfMockUsers.get(0));
+        when(userService.updateUser(any(User.class))).thenReturn(null);
+        when(userService.updateUser(listOfMockUsers.get(0))).thenReturn(listOfMockUsers.get(0));
 
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders
                 .put("/user/mockuser")

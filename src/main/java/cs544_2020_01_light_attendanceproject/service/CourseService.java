@@ -7,13 +7,10 @@ import org.springframework.stereotype.Service;
 import cs544_2020_01_light_attendanceproject.domain.Course;
 
 public interface CourseService {
-	    public Course addNewCourse(Course course);
-	    public Iterable<Course> listCourse();
+	    public Course saveCourse(Course course);
+	    public Iterable<Course> listCourses();
 	
-		public Course replaceCourse(String name, Course course);
-		public Course findCourseByName(String name);
+		public Course updateCourse(Course course);
+		public Optional<Course> findCourseByName(String name);
 		void deleteCourse(Course course);
-
-		
-
 }

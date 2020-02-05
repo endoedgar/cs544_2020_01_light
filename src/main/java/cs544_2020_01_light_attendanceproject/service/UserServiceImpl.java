@@ -42,7 +42,7 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     @Override
-    public User save(@Valid User account) {
+    public User saveUser(@Valid User account) {
         validateUniqueUserFields(account);
         return userRepository.save(account);
     }
@@ -58,7 +58,7 @@ public class UserServiceImpl implements UserService {
     }
 
     @Transactional
-    public User replaceUser(@Valid User newUser) {
+    public User updateUser(@Valid User newUser) {
         validateUniqueUserFields(newUser);
         return userRepository.save(newUser);
     }
