@@ -53,6 +53,7 @@ public class CourseOffering {
         this.startDate = startDate;
         this.endDate = endDate;
         this.sessions = sessions;
+        this.location = location;
     }
 
     public Long getId() {
