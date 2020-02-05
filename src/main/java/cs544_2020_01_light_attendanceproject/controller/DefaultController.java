@@ -1,7 +1,5 @@
 package cs544_2020_01_light_attendanceproject.controller;
 
-import java.io.IOException;
-
 import javax.servlet.http.HttpServletResponse;
 
 import org.springframework.security.access.annotation.Secured;
@@ -18,7 +16,8 @@ public class DefaultController {
 	
 	@GetMapping
 	public void loadIndex(HttpServletResponse httpResponse) throws Exception {
-		 String currentUsername = SecurityContextHolder.getContext().getAuthentication().getName();
-		httpResponse.sendRedirect("/user/"+currentUsername);
+	   //String currentUsername = SecurityContextHolder.getContext().getAuthentication().getName();
+		//httpResponse.sendRedirect("/user/"+currentUsername);
+		httpResponse.sendRedirect("/swagger-ui.html");
 	}
 }
