@@ -25,6 +25,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -84,12 +85,43 @@ class CourseControllerTest {
 
     @Test
     @WithMockUser(value = "admin",roles={"ADMIN"})
-    void deleteCourse() {
+    void deleteCourse() throws Exception {
+        when(courseService.findCourseByName("EA")).thenReturn(Optional.of(listOfMockedCourses.get(0)));
+
+        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders
+                .delete("/course/EA")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+        ).andExpect(MockMvcResultMatchers.status().isOk())
+                .andReturn();
+
+        Course returnedCourse = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), Course.class);
+
+        assertThat(returnedCourse).isInstanceOf(Course.class);
+        assertThat(returnedCourse).isNotNull();
+        assertThat(returnedCourse).isEqualTo(listOfMockedCourses.get(0));
     }
 
     @Test
     @WithMockUser(value = "admin",roles={"ADMIN"})
-    void updateCourse() {
+    void updateCourse() throws Exception {
+        when(courseService.findCourseByName("MPP")).thenReturn(Optional.of(listOfMockedCourses.get(1)));
+        when(courseService.updateCourse(any(Course.class))).thenReturn(null);
+        when(courseService.updateCourse(listOfMockedCourses.get(1))).thenReturn(listOfMockedCourses.get(2));
+
+        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders
+                .put("/course/MPP")
+                .content(asJsonString(listOfMockedCourses.get(1)))
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+        ).andExpect(MockMvcResultMatchers.status().isOk())
+                .andReturn();
+
+        Course returnedCourse = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), Course.class);
+
+        assertThat(returnedCourse).isInstanceOf(Course.class);
+        assertThat(returnedCourse).isNotNull();
+        assertThat(returnedCourse).isEqualTo(new Course(3L, "Algorithms", "Damn Algorithms"));
     }
 
     @Test
