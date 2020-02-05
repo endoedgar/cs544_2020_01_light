@@ -16,6 +16,9 @@ public class Location {
     @OneToMany(mappedBy = "location", cascade = CascadeType.ALL)
     private List<Attendance> attendances;
 
+    @OneToMany(mappedBy = "location", cascade = CascadeType.ALL)
+    private List<CourseOffering> courseOfferings;
+
     public Location() { }
 
     public Location(Long id, String description) {
@@ -37,6 +40,22 @@ public class Location {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public List<Attendance> getAttendances() {
+        return attendances;
+    }
+
+    public void setAttendances(List<Attendance> attendances) {
+        this.attendances = attendances;
+    }
+
+    public List<CourseOffering> getCourseOfferings() {
+        return courseOfferings;
+    }
+
+    public void setCourseOfferings(List<CourseOffering> courseOfferings) {
+        this.courseOfferings = courseOfferings;
     }
 
     @Override

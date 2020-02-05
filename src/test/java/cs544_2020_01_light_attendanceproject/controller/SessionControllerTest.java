@@ -2,10 +2,7 @@ package cs544_2020_01_light_attendanceproject.controller;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import cs544_2020_01_light_attendanceproject.domain.Course;
-import cs544_2020_01_light_attendanceproject.domain.CourseOffering;
-import cs544_2020_01_light_attendanceproject.domain.Session;
-import cs544_2020_01_light_attendanceproject.domain.Timeslot;
+import cs544_2020_01_light_attendanceproject.domain.*;
 import cs544_2020_01_light_attendanceproject.service.SessionService;
 import cs544_2020_01_light_attendanceproject.service.TimeSlotService;
 import org.junit.jupiter.api.Test;
@@ -71,9 +68,16 @@ class SessionControllerTest {
             new Course(3L, "Algorithms", "Damn Algorithms")
     );
 
+    static final List<Location> listOfMockedLocations = Arrays.asList(
+            new Location(1L, "Location A"),
+            new Location(2L, "Location B"),
+            new Location(3L, "Location C")
+    );
+
+
     static final List<CourseOffering> listOfCourseOffering = Arrays.asList(
-            new CourseOffering(1L, listOfMockedCourses.get(0), toDate(LocalDate.of(2020, 5, 1)), toDate(LocalDate.of(2020, 6, 1)), new ArrayList<>()),
-            new CourseOffering(2L, listOfMockedCourses.get(1), toDate(LocalDate.of(2020, 6, 1)), toDate(LocalDate.of(2020, 6, 1)), new ArrayList<>())
+            new CourseOffering(1L, listOfMockedCourses.get(0), toDate(LocalDate.of(2020, 5, 1)), toDate(LocalDate.of(2020, 6, 1)), listOfMockedLocations.get(0), new ArrayList<>()),
+            new CourseOffering(2L, listOfMockedCourses.get(1), toDate(LocalDate.of(2020, 6, 1)), toDate(LocalDate.of(2020, 6, 1)), listOfMockedLocations.get(0), new ArrayList<>())
     );
 
     static final List<Timeslot> listOfTimeslots = Arrays.asList(

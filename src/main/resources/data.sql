@@ -29,10 +29,10 @@ REPLACE INTO timeslot (abbreviation, description, begin_time, end_time) VALUES
 ("AM", "Morning", "00:00:00", "11:59:59"),
 ("PM", "Afternoon", "12:00:00", "23:59:59");
 
-REPLACE INTO course_offering(id, course_id, start_date, end_date) VALUES
-(1, 1, "2020-05-01", "2020-06-01"),
-(2, 2, "2020-06-01", "2020-06-01"),
-(3, 3, "2020-05-01", "2020-06-01");
+REPLACE INTO course_offering(id, course_id, start_date, end_date, location_id) VALUES
+(1, 1, "2020-05-01", "2020-06-01", 1),
+(2, 2, "2020-06-01", "2020-06-01", 1),
+(3, 3, "2020-05-01", "2020-06-01", 1);
 
 REPLACE INTO `session`(id, course_offering_id, timeslot_abbreviation, `date`) VALUES
 (1, 1, "AM", "2020-05-10"),

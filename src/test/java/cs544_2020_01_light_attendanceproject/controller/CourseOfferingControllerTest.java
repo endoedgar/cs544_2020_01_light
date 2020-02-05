@@ -2,10 +2,7 @@ package cs544_2020_01_light_attendanceproject.controller;
 
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
-import cs544_2020_01_light_attendanceproject.domain.Course;
-import cs544_2020_01_light_attendanceproject.domain.CourseOffering;
-import cs544_2020_01_light_attendanceproject.domain.Session;
-import cs544_2020_01_light_attendanceproject.domain.Timeslot;
+import cs544_2020_01_light_attendanceproject.domain.*;
 import cs544_2020_01_light_attendanceproject.service.CourseOfferingService;
 import cs544_2020_01_light_attendanceproject.service.TimeSlotService;
 import org.junit.jupiter.api.Test;
@@ -59,6 +56,12 @@ class CourseOfferingControllerTest {
         return new Date(milis.longValue());
     }
 
+    static final List<Location> listOfMockedLocations = Arrays.asList(
+            new Location(1L, "Location A"),
+            new Location(2L, "Location B"),
+            new Location(3L, "Location C")
+    );
+
     static final List<Course> listOfMockedCourses = Arrays.asList(
             new Course(1L, "EA", "Enterprise Architecture"),
             new Course(2L, "MPP", "Modern Programming Practices"),
@@ -66,8 +69,8 @@ class CourseOfferingControllerTest {
     );
 
     static final List<CourseOffering> listOfCourseOffering = Arrays.asList(
-            new CourseOffering(1L, listOfMockedCourses.get(0), toDate(LocalDate.of(2020, 5, 1)), toDate(LocalDate.of(2020, 6, 1)), new ArrayList<>()),
-            new CourseOffering(2L, listOfMockedCourses.get(1), toDate(LocalDate.of(2020, 6, 1)), toDate(LocalDate.of(2020, 6, 1)), new ArrayList<>())
+            new CourseOffering(1L, listOfMockedCourses.get(0), toDate(LocalDate.of(2020, 5, 1)), toDate(LocalDate.of(2020, 6, 1)), listOfMockedLocations.get(0), new ArrayList<>()),
+            new CourseOffering(2L, listOfMockedCourses.get(1), toDate(LocalDate.of(2020, 6, 1)), toDate(LocalDate.of(2020, 6, 1)), listOfMockedLocations.get(0), new ArrayList<>())
     );
 
     public String asJsonString(final Object obj) {
@@ -148,8 +151,8 @@ class CourseOfferingControllerTest {
     @Test
     @WithMockUser(value = "admin",roles={"ADMIN"})
     void updateCourseOffering() throws Exception {
-        CourseOffering oldCourseOffering = new CourseOffering(1L, listOfMockedCourses.get(0), toDate(LocalDate.of(2020, 5, 1)), toDate(LocalDate.of(2020, 6, 1)), new ArrayList<>());
-        CourseOffering newCourseOffering = new CourseOffering(1L, listOfMockedCourses.get(2), toDate(LocalDate.of(2021, 6, 1)), toDate(LocalDate.of(2021, 6, 1)), new ArrayList<>());
+        CourseOffering oldCourseOffering = new CourseOffering(1L, listOfMockedCourses.get(0), toDate(LocalDate.of(2020, 5, 1)), toDate(LocalDate.of(2020, 6, 1)), listOfMockedLocations.get(0), new ArrayList<>());
+        CourseOffering newCourseOffering = new CourseOffering(1L, listOfMockedCourses.get(2), toDate(LocalDate.of(2021, 6, 1)), toDate(LocalDate.of(2021, 6, 1)), listOfMockedLocations.get(0), new ArrayList<>());
 
         when(courseOfferingService.getCourseOffering(oldCourseOffering.getId())).thenReturn(Optional.of(oldCourseOffering));
         when(courseOfferingService.updateCourseOffering(any(CourseOffering.class))).thenReturn(null);

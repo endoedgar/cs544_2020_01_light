@@ -39,10 +39,15 @@ public class CourseOffering {
     @ManyToMany(mappedBy = "courseOfferings")
     private List<User> students;
 
+    @JsonIgnoreProperties("courseOfferings")
+    @ManyToOne
+    @NotNull(message = "please specify a location")
+    private Location location;
+
 
     public CourseOffering() {}
 
-    public CourseOffering(Long id, Course course, Date startDate, Date endDate, List<Session> sessions) {
+    public CourseOffering(Long id, Course course, Date startDate, Date endDate, Location location, List<Session> sessions) {
         this.id = id;
         this.course = course;
         this.startDate = startDate;
@@ -98,6 +103,14 @@ public class CourseOffering {
         this.sessions = sessions;
     }
 
+    public Location getLocation() {
+        return location;
+    }
+
+    public void setLocation(Location location) {
+        this.location = location;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -107,11 +120,13 @@ public class CourseOffering {
                 Objects.equals(course, that.course) &&
                 Objects.equals(startDate, that.startDate) &&
                 Objects.equals(endDate, that.endDate) &&
-                Objects.equals(sessions, that.sessions);
+                Objects.equals(sessions, that.sessions) &&
+                Objects.equals(students, that.students) &&
+                Objects.equals(location, that.location);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, course, startDate, endDate, sessions);
+        return Objects.hash(id, course, startDate, endDate, sessions, students, location);
     }
 }
