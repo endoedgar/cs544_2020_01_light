@@ -7,6 +7,7 @@ import org.springframework.security.core.userdetails.UserDetails;
 import org.springframework.security.core.userdetails.UserDetailsService;
 import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Propagation;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.validation.Valid;
@@ -30,14 +31,13 @@ public class UserServiceImpl implements UserService {
                 .orElseThrow(() -> new UsernameNotFoundException("Invalid username or password."));
     }
 
-    private void validateUniqueUserFields(@Valid User account) {
-        if(account.getId() == null) {
-            if (userRepository.existsUserByUsername(account.getUsername())) {
-                throw new ValidationException("Username " + account.getUsername() + " is already taken.");
-            }
-            if (userRepository.existsUserByBarCodeId(account.getBarCodeId())) {
-                throw new ValidationException("Barcode " + account.getBarCodeId() + " is already taken.");
-            }
+    @Transactional(readOnly = true)
+    public void validateUniqueUserFields(@Valid User account) {
+        if (userRepository.existsUserByUsernameAndIdIsNot(account.getUsername(), account.getId())) {
+            throw new ValidationException("Username " + account.getUsername() + " is already taken.");
+        }
+        if (userRepository.existsUserByBarCodeIdAndIdIsNot(account.getBarCodeId(), account.getId())) {
+            throw new ValidationException("Barcode " + account.getBarCodeId() + " is already taken.");
         }
     }
 
@@ -48,15 +48,15 @@ public class UserServiceImpl implements UserService {
         return userRepository.save(account);
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public Iterable<User> listUsers() {
         return userRepository.findAll();
     }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public Optional<User> findOneUser(Long id) { return userRepository.findById(id); }
 
-    @Transactional
+    @Transactional(readOnly = true)
     public Optional<User> findOneUser(String username) { return userRepository.findUserByUsername(username); }
 
     @Transactional
@@ -71,6 +71,7 @@ public class UserServiceImpl implements UserService {
 
     @Transactional
     public User replaceUser(@Valid User newUser, String username) {
+        validateUniqueUserFields(newUser);
         return userRepository.findUserByUsername(username).map(user -> {
             user.setBarCodeId(newUser.getBarCodeId());
             user.setEmail(newUser.getEmail());
@@ -80,9 +81,7 @@ public class UserServiceImpl implements UserService {
             user.setPassword(newUser.getPassword());
             user.setRoles(new HashSet<>(newUser.getRoles()));
             return this.save(user);
-        }).orElseGet(() -> {
-            return this.save(newUser);
-        });
+        }).orElseGet(() -> userRepository.save(newUser));
     }
 
     @Transactional
