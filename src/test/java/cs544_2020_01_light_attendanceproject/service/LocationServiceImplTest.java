@@ -48,11 +48,12 @@ public class LocationServiceImplTest {
 
 	@Test
 	public void testCreateLocation() {
-		long dbSize = locationRepository.count();
+		Long dbSize = locationRepository.count();
 		Location location = new Location();
 		location.setDescription("Dalby Hall");
 		locationService.createLocation(location);
-		assertEquals(dbSize++, dbSize);
+		Long expectedSize = locationRepository.count();
+		assertEquals(++dbSize, expectedSize);
 	}
 
 	@Test
