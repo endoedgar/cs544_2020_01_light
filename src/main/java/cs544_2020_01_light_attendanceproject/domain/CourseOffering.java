@@ -15,6 +15,7 @@ public class CourseOffering {
     private Long id;
 
     @ManyToOne
+    @NotNull(message = "please specify a course")
     private Course course;
     @Temporal(TemporalType.DATE)
     @NotNull(message = "please specify startDate")
