@@ -12,4 +12,6 @@ public interface CourseOfferingService {
     public Iterable<CourseOffering> getAllCourseOffering();
     public void deleteOfferingCourse(CourseOffering co);
     public CourseOffering updateCourseOffering(CourseOffering courseOffering);
+
+    public Optional<List<Session>> getCourseSessions(Long id);
 }

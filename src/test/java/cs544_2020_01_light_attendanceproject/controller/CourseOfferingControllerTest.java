@@ -7,6 +7,7 @@ import cs544_2020_01_light_attendanceproject.service.CourseOfferingService;
 import cs544_2020_01_light_attendanceproject.service.TimeSlotService;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.web.servlet.WebMvcTest;
@@ -171,5 +172,19 @@ class CourseOfferingControllerTest {
         assertThat(returnedCourseOffering).isInstanceOf(CourseOffering.class);
         assertThat(returnedCourseOffering).isNotNull();
         assertThat(returnedCourseOffering).isEqualTo(newCourseOffering);
+    }
+    @Test
+    @WithMockUser(value = "student",roles={"STUDENT"})
+    void viewAllOfferingSessions() throws Exception {
+        Optional<List<Session>> mockedList = Mockito.mock(Optional.class);
+
+        when(courseOfferingService.getCourseSessions(1L)).thenReturn(mockedList);
+
+        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders
+                .get("/getSessions/1")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+        ).andExpect(MockMvcResultMatchers.status().isOk())
+                .andReturn();
     }
 }

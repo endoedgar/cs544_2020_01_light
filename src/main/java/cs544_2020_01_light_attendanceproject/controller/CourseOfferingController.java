@@ -14,6 +14,8 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 import javax.validation.Valid;
 import java.net.URI;
 import java.util.List;
+import java.util.Optional;
+
 @RestController
 @RequestMapping("/courseOffering")
 public class CourseOfferingController {
@@ -37,7 +39,7 @@ public class CourseOfferingController {
     }
 
     @GetMapping
-    @Secured({ "ROLE_ADMIN", "ROLE_FACULTY", "ROLE_STUDENT" })// case 3 viewa all offering course
+    @Secured({ "ROLE_ADMIN", "ROLE_FACULTY", "ROLE_STUDENT" })// case 3 views all offering course
     public Iterable<CourseOffering> viewAllOfferingCourse() {
         return courseOfferingServise.getAllCourseOffering();
     }
@@ -47,7 +49,12 @@ public class CourseOfferingController {
     public CourseOffering fetchCourseOffering(@PathVariable Long id) {
         return courseOfferingServise.getCourseOffering(id).orElseThrow(() -> new ItemNotFoundException(id.toString(), CourseOffering.class));
     }
-
+    @GetMapping("/getSessions/{id}")
+    @Secured({ "ROLE_ADMIN", "ROLE_FACULTY", "ROLE_STUDENT" }) //case 4 views related sessions
+    public List<Session>  fetchCourseSessions(@PathVariable Long id) {
+        return courseOfferingServise.getCourseSessions(id).orElseThrow(() ->
+                new ItemNotFoundException(id.toString(), CourseOffering.class));
+    }
     @DeleteMapping("/{id}")
     @Secured({"ROLE_ADMIN"})
     public CourseOffering deleteCourseOffering(@PathVariable Long id) {
