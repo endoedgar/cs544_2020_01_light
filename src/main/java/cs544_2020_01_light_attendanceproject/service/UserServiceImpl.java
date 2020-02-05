@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.validation.Valid;
+import javax.validation.ValidationException;
 import java.util.HashSet;
 import java.util.Optional;
 
@@ -25,15 +26,25 @@ public class UserServiceImpl implements UserService {
     @Override
     @Transactional
     public User findUserByUsername(String username) throws UsernameNotFoundException {
-        Optional<User> user = userRepository.findUserByUsername(username);
+        return userRepository.findUserByUsername(username)
+                .orElseThrow(() -> new UsernameNotFoundException("Invalid username or password."));
+    }
 
-        user.orElseThrow(() -> new UsernameNotFoundException("Invalid username or password."));
-        return user.get();
+    private void validateUniqueUserFields(@Valid User account) {
+        if(account.getId() == null) {
+            if (userRepository.existsUserByUsername(account.getUsername())) {
+                throw new ValidationException("Username " + account.getUsername() + " is already taken.");
+            }
+            if (userRepository.existsUserByBarCodeId(account.getBarCodeId())) {
+                throw new ValidationException("Barcode " + account.getBarCodeId() + " is already taken.");
+            }
+        }
     }
 
     @Transactional
     @Override
-    public User registerNewUserAccount(@Valid User account) {
+    public User save(@Valid User account) {
+        validateUniqueUserFields(account);
         return userRepository.save(account);
     }
 
@@ -68,10 +79,9 @@ public class UserServiceImpl implements UserService {
             user.setLastName(newUser.getLastName());
             user.setPassword(newUser.getPassword());
             user.setRoles(new HashSet<>(newUser.getRoles()));
-            return userRepository.save(user);
+            return this.save(user);
         }).orElseGet(() -> {
-            newUser.setUsername(username);
-            return userRepository.save(newUser);
+            return this.save(newUser);
         });
     }
 

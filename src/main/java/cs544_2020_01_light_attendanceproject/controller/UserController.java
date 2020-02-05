@@ -39,7 +39,7 @@ public class UserController {
     @PostMapping("")
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<Object> newUser(@RequestBody @Valid User user) {
-        userService.registerNewUserAccount(user);
+        userService.save(user);
 
         URI location = ServletUriComponentsBuilder.fromCurrentRequest()
                 .path("/{id}")

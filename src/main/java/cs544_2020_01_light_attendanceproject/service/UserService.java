@@ -9,7 +9,7 @@ import java.util.Optional;
 
 public interface UserService {
     public User findUserByUsername(String username);
-    public User registerNewUserAccount(User account);
+    public User save(User account);
     public Iterable<User> listUsers();
     public Optional<User> findOneUser(Long id);
     public Optional<User> findOneUser(String username);

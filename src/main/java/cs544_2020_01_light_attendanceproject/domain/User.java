@@ -14,7 +14,7 @@ import java.util.Set;
 public class User implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
     @NotEmpty(message = "Please provide a first name.")
     private String firstName;
     @NotEmpty(message = "Please provide a last name.")
@@ -38,11 +38,11 @@ public class User implements Serializable {
 
     public User() {}
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
-    private void setId(long id) {
+    private void setId(Long id) {
         this.id = id;
     }
 
