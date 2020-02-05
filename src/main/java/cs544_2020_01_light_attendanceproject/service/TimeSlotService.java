@@ -14,7 +14,6 @@ import cs544_2020_01_light_attendanceproject.domain.Timeslot;
  *
  */
 public interface TimeSlotService {
-
 	public Optional<Timeslot> get(String abbr);
 	public Iterable<Timeslot> getAll();
 	public Timeslot create(Timeslot tm);

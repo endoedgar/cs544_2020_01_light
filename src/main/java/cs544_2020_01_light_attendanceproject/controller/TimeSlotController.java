@@ -5,6 +5,8 @@ package cs544_2020_01_light_attendanceproject.controller;
 
 import javax.validation.Valid;
 
+import cs544_2020_01_light_attendanceproject.domain.User;
+import cs544_2020_01_light_attendanceproject.exceptions.ItemNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -67,7 +69,7 @@ public class TimeSlotController {
 	@Secured(value = { "ROLE_ADMIN" })
     @GetMapping("/{abbr}")
     public Timeslot fetchTs(@PathVariable String abbr) {
-        return timeSlotService.get(abbr).orElse(null);
+        return timeSlotService.get(abbr).orElseThrow(() -> new ItemNotFoundException(abbr, Timeslot.class));
     }
 
 	@Secured(value = { "ROLE_ADMIN" })

@@ -3,6 +3,7 @@ package cs544_2020_01_light_attendanceproject.domain;
 import javax.persistence.*;
 import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
+import javax.validation.constraints.NotNull;
 import java.util.Date;
 import java.util.List;
 
@@ -10,28 +11,36 @@ import java.util.List;
 public class CourseOffering {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
 
     @ManyToOne
     private Course course;
-    @Temporal(TemporalType.TIMESTAMP)
-    @NotEmpty(message = "please specify startDate")
+    @Temporal(TemporalType.DATE)
+    @NotNull(message = "please specify startDate")
     private Date startDate;
-    @Temporal(TemporalType.TIMESTAMP)
-    @NotEmpty(message = "please specify endDate")
+    @Temporal(TemporalType.DATE)
+    @NotNull(message = "please specify endDate")
     private Date endDate;
     @OneToMany(mappedBy = "courseOffering",cascade = CascadeType.ALL)
     @Valid
-    private List<Session> session;
+    private List<Session> sessions;
 
 
     public CourseOffering() {}
 
-    public long getId() {
+    public CourseOffering(Long id, Course course, Date startDate, Date endDate, List<Session> sessions) {
+        this.id = id;
+        this.course = course;
+        this.startDate = startDate;
+        this.endDate = endDate;
+        this.sessions = sessions;
+    }
+
+    public Long getId() {
         return id;
     }
 
-    private void setId(long id) {
+    private void setId(Long id) {
         this.id = id;
     }
 
@@ -59,12 +68,12 @@ public class CourseOffering {
         this.endDate = endDate;
     }
 
-    public List<Session> getSession() {
-        return session;
+    public List<Session> getSessions() {
+        return sessions;
     }
 
-    public void setSession(List<Session> session) {
-        this.session = session;
+    public void setSessions(List<Session> sessions) {
+        this.sessions = sessions;
     }
 
 }
