@@ -4,12 +4,13 @@ import javax.persistence.*;
 import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 import java.util.Date;
+import java.util.Objects;
 
 @Entity
 public class Session {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
-    private long id;
+    private Long id;
     @ManyToOne(cascade = CascadeType.ALL)
     @Valid
     private CourseOffering courseOffering;
@@ -20,11 +21,18 @@ public class Session {
 
     public Session() {}
 
-    public long getId() {
+    public Session(Long id, CourseOffering courseOffering, Timeslot timeslot, Date date) {
+        this.id = id;
+        this.courseOffering = courseOffering;
+        this.timeslot = timeslot;
+        this.date = date;
+    }
+
+    public Long getId() {
         return id;
     }
 
-    private void setId(long id) {
+    private void setId(Long id) {
         this.id = id;
     }
 
@@ -50,5 +58,21 @@ public class Session {
 
     public void setDate(Date date) {
         this.date = date;
+    }
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        Session session = (Session) o;
+        return Objects.equals(id, session.id) &&
+                Objects.equals(courseOffering, session.courseOffering) &&
+                Objects.equals(timeslot, session.timeslot) &&
+                Objects.equals(date, session.date);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, courseOffering, timeslot, date);
     }
 }

@@ -1,5 +1,9 @@
 package cs544_2020_01_light_attendanceproject.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import org.hibernate.annotations.Fetch;
+import org.springframework.context.annotation.Lazy;
+
 import javax.persistence.*;
 import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
@@ -23,6 +27,7 @@ public class CourseOffering {
     @Temporal(TemporalType.DATE)
     @NotNull(message = "please specify endDate")
     private Date endDate;
+    @JsonIgnoreProperties("courseOffering")
     @OneToMany(mappedBy = "courseOffering",cascade = CascadeType.ALL)
     @Valid
     private List<Session> sessions;

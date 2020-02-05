@@ -34,6 +34,11 @@ public class SessionController {
         return ResponseEntity.created(locationUrl).build();
     }
 
+    @GetMapping
+    @Secured({ "ROLE_ADMIN" })
+    public Iterable<Session> findAllSessions() {
+        return sessionService.findAllSessions();
+    }
 
     @GetMapping("/{id}")
     @Secured({ "ROLE_ADMIN", "ROLE_FACULTY", "ROLE_STUDENT" })
