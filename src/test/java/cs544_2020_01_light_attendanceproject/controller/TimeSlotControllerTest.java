@@ -28,6 +28,7 @@ import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
+import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 @ExtendWith(MockitoExtension.class)
@@ -58,10 +59,9 @@ class TimeSlotControllerTest {
     @Test
     @WithMockUser(value = "admin",roles={"ADMIN"})
     void newTimeSlot() throws Exception {
-        String asjs = asJsonString(listOfTimeslots.get(0));
         mockMvc.perform(MockMvcRequestBuilders
                 .post("/timeslots")
-                .content(asjs)
+                .content(asJsonString(listOfTimeslots.get(0)))
                 .contentType(MediaType.APPLICATION_JSON)
                 .accept(MediaType.APPLICATION_JSON)
         ).andExpect(MockMvcResultMatchers.status().isCreated())
@@ -104,10 +104,46 @@ class TimeSlotControllerTest {
     }
 
     @Test
-    void deleteTs() {
+    @WithMockUser(value = "admin",roles={"ADMIN"})
+    void deleteTs() throws Exception {
+        when(timeSlotService.get("AM")).thenReturn(Optional.of(listOfTimeslots.get(0)));
+
+        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders
+                .delete("/timeslots/AM")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+        ).andExpect(MockMvcResultMatchers.status().isOk())
+                .andReturn();
+
+        Timeslot returnedTimeslot = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), Timeslot.class);
+
+        assertThat(returnedTimeslot).isInstanceOf(Timeslot.class);
+        assertThat(returnedTimeslot).isNotNull();
+        assertThat(returnedTimeslot).isEqualTo(listOfTimeslots.get(0));
     }
 
     @Test
-    void updateTs() {
+    @WithMockUser(value = "admin",roles={"ADMIN"})
+    void updateTs() throws Exception {
+        Timeslot oldTimeslot = new Timeslot("AM", "Morning", LocalTime.of(0, 0), LocalTime.of(11,59, 59));
+        Timeslot newTimeslot = new Timeslot("AM", "Morning new", LocalTime.of(0, 0), LocalTime.of(11,59, 59));
+
+        when(timeSlotService.get(oldTimeslot.getAbbreviation())).thenReturn(Optional.of(oldTimeslot));
+        when(timeSlotService.update(any(Timeslot.class))).thenReturn(null);
+        when(timeSlotService.update(newTimeslot)).thenReturn(newTimeslot);
+
+        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders
+                .put("/timeslots/" + oldTimeslot.getAbbreviation())
+                .content(asJsonString(newTimeslot))
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+        ).andExpect(MockMvcResultMatchers.status().isOk())
+                .andReturn();
+
+        Timeslot returnedTimeslot = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), Timeslot.class);
+
+        assertThat(returnedTimeslot).isInstanceOf(Timeslot.class);
+        assertThat(returnedTimeslot).isNotNull();
+        assertThat(returnedTimeslot).isEqualTo(newTimeslot);
     }
 }
