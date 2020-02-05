@@ -6,6 +6,7 @@ import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
 import java.util.List;
+import java.util.Objects;
 
 @Entity
 public class CourseOffering {
@@ -76,4 +77,20 @@ public class CourseOffering {
         this.sessions = sessions;
     }
 
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+        CourseOffering that = (CourseOffering) o;
+        return Objects.equals(id, that.id) &&
+                Objects.equals(course, that.course) &&
+                Objects.equals(startDate, that.startDate) &&
+                Objects.equals(endDate, that.endDate) &&
+                Objects.equals(sessions, that.sessions);
+    }
+
+    @Override
+    public int hashCode() {
+        return Objects.hash(id, course, startDate, endDate, sessions);
+    }
 }
