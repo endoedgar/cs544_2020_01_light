@@ -63,7 +63,7 @@ public class CourseController {
 	}
 
 	@GetMapping("/{name}")
-	public Course findCourseByName(String name) {
+	public Course findCourseByName(@PathVariable String name) {
 		return courseService.findCourseByName(name).orElseThrow(() -> new ItemNotFoundException(name, Course.class));
 	}
 }

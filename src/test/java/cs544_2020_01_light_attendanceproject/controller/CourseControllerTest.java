@@ -21,6 +21,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.util.Arrays;
 import java.util.List;
+import java.util.Optional;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
@@ -33,15 +34,15 @@ class CourseControllerTest {
     MockMvc mockMvc;
 
     @MockBean
-    CourseService locationService;
+    CourseService courseService;
 
     @Autowired
     private ObjectMapper objectMapper;
 
     static final List<Course> listOfMockedCourses = Arrays.asList(
-            new Course(1L, "EA"),
-            new Course(2L, "MPP"),
-            new Course(3L, "Algorithms")
+            new Course(1L, "EA", "Enterprise Architecture"),
+            new Course(2L, "MPP", "Modern Programming Practices"),
+            new Course(3L, "Algorithms", "Damn Algorithms")
     );
 
     public static String asJsonString(final Object obj) {
@@ -54,13 +55,20 @@ class CourseControllerTest {
 
     @Test
     @WithMockUser(value = "admin",roles={"ADMIN"})
-    void addNewCourse() {
+    void addNewCourse() throws Exception {
+        mockMvc.perform(MockMvcRequestBuilders
+                .post("/course")
+                .content(asJsonString(listOfMockedCourses.get(1)))
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+        ).andExpect(MockMvcResultMatchers.status().isCreated())
+                .andExpect(MockMvcResultMatchers.redirectedUrlPattern("**/course/MPP"));
     }
 
     @Test
     @WithMockUser(value = "admin",roles={"ADMIN"})
     void all() throws Exception {
-        when(locationService.listCourses()).thenReturn(listOfMockedCourses);
+        when(courseService.listCourses()).thenReturn(listOfMockedCourses);
 
         MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders
                 .get("/course")
@@ -87,6 +95,17 @@ class CourseControllerTest {
     @Test
     @WithMockUser(value = "admin",roles={"ADMIN"})
     void findCourseByName() throws Exception {
+        when(courseService.findCourseByName("Algorithms")).thenReturn(Optional.of(listOfMockedCourses.get(2)));
 
+        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders
+                .get("/course/Algorithms")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+        ).andExpect(MockMvcResultMatchers.status().isOk())
+                .andReturn();
+
+        Course returnedLocation = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), Course.class);
+
+        assertThat(returnedLocation).isEqualTo(listOfMockedCourses.get(2));
     }
 }

@@ -11,13 +11,16 @@ public class Course {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
     @NotEmpty(message = "Please provide a name;")
+    @Column(nullable = false)
     private String name;
     @NotEmpty(message = "Please provide a description;")
+    @Column(nullable = false)
     private String description;
     public Course() {}
-    public Course(Long id, String name) {
+    public Course(Long id, String name, String description) {
         this.id = id;
         this.name = name;
+        this.description = description;
     }
 
     public Long getId() {
