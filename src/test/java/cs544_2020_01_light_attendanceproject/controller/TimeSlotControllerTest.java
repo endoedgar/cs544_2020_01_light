@@ -45,7 +45,7 @@ class TimeSlotControllerTest {
 
     public static Date toDate(LocalTime localTime) {
         Instant instant = localTime.atDate(LocalDate.ofEpochDay(0))
-                .atZone(ZoneId.systemDefault()).toInstant();
+                .atZone(ZoneId.of("America/Chicago")).toInstant();
         return toDate(instant);
     }
 
