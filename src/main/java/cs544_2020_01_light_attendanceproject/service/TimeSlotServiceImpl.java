@@ -34,34 +34,38 @@ public class TimeSlotServiceImpl implements TimeSlotService {
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Optional<Timeslot> get(String abbr) {
 		// TODO Auto-generated method stub
 		return tsRepository.findById(abbr);
 	}
 
 	@Override
+	@Transactional(readOnly = true)
 	public Iterable<Timeslot> getAll() {
 		// TODO Auto-generated method stub
 		return tsRepository.findAll();
 	}
 
 	@Override
+	@Transactional
 	public Timeslot create(Timeslot tm) {
 		// TODO Auto-generated method stub
 		return tsRepository.save(tm);
 	}
 
 	@Override
+	@Transactional
 	public Timeslot update(Timeslot tm) {
 		// TODO Auto-generated method stub
 		return tsRepository.save(tm);
 	}
 
 	@Override
+	@Transactional
 	public void delete(Timeslot timeslot) {
 		// TODO Auto-generated method stub
 		tsRepository.delete(timeslot);
-		
 	}
 
 }
