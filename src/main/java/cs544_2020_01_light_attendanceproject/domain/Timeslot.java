@@ -26,12 +26,12 @@ public class Timeslot {
     private String description;
 
     @Temporal(TemporalType.TIME)
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm:ss", timezone="CST")
     @NotNull(message = "Please provide a start time.")
     private Date beginTime;
 
     @Temporal(TemporalType.TIME)
-    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm")
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm:ss", timezone="CST")
     @NotNull(message = "Please provide an end time.")
     private Date endTime;
 
