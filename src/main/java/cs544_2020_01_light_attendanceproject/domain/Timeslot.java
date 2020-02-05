@@ -6,6 +6,7 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
+import javax.validation.constraints.Pattern;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import org.springframework.format.annotation.DateTimeFormat;
@@ -19,21 +20,25 @@ import java.util.Objects;
 @Entity
 public class Timeslot {
     @Id
+    @NotEmpty(message = "Please provide an abbreviation.")
     private String abbreviation;
     @NotEmpty(message = "Please provide a description.")
     private String description;
 
     @Temporal(TemporalType.TIME)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm")
     @NotNull(message = "Please provide a start time.")
-    private LocalTime beginTime;
+    private Date beginTime;
+
     @Temporal(TemporalType.TIME)
+    @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm")
     @NotNull(message = "Please provide an end time.")
-    private LocalTime endTime;
+    private Date endTime;
 
     public Timeslot() {
     }
 
-    public Timeslot(String abbreviation, String description, LocalTime beginTime, LocalTime endTime) {
+    public Timeslot(String abbreviation, String description, Date beginTime, Date endTime) {
         this.abbreviation = abbreviation;
         this.description = description;
         this.beginTime = beginTime;
@@ -56,19 +61,19 @@ public class Timeslot {
         this.description = description;
     }
 
-    public LocalTime getBeginTime() {
+    public Date getBeginTime() {
         return beginTime;
     }
 
-    public void setBeginTime(LocalTime beginTime) {
+    public void setBeginTime(Date beginTime) {
         this.beginTime = beginTime;
     }
 
-    public LocalTime getEndTime() {
+    public Date getEndTime() {
         return endTime;
     }
 
-    public void setEndTime(LocalTime endTime) {
+    public void setEndTime(Date endTime) {
         this.endTime = endTime;
     }
 

@@ -1,14 +1,17 @@
 package cs544_2020_01_light_attendanceproject.advice;
 
+import com.fasterxml.jackson.databind.exc.InvalidFormatException;
 import cs544_2020_01_light_attendanceproject.exceptions.AdminsCannotDeleteThemselvesException;
 import cs544_2020_01_light_attendanceproject.exceptions.ItemNotFoundException;
 import org.aspectj.lang.ProceedingJoinPoint;
 import org.aspectj.lang.annotation.Around;
 import org.aspectj.lang.annotation.Aspect;
+import org.springframework.beans.ConversionNotSupportedException;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
+import org.springframework.http.converter.HttpMessageNotReadableException;
 import org.springframework.validation.ObjectError;
 import org.springframework.web.bind.MethodArgumentNotValidException;
 import org.springframework.web.bind.annotation.ControllerAdvice;
@@ -82,6 +85,15 @@ public class ExceptionHandlingAdvice extends ResponseEntityExceptionHandler {
 	}
 
 	@Override
+	protected ResponseEntity<Object> handleHttpMessageNotReadable(
+			HttpMessageNotReadableException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
+		List<String> details = new ArrayList<>();
+		details.add(ex.getLocalizedMessage());
+		ErrorResponse error = new ErrorResponse("Validation Failed", details);
+		return new ResponseEntity(error, HttpStatus.BAD_REQUEST);
+	}
+
+	@Override
 	protected ResponseEntity<Object> handleMethodArgumentNotValid(MethodArgumentNotValidException ex, HttpHeaders headers, HttpStatus status, WebRequest request) {
 		List<String> details = new ArrayList<>();
 		for(ObjectError error : ex.getBindingResult().getAllErrors()) {
@@ -90,5 +102,4 @@ public class ExceptionHandlingAdvice extends ResponseEntityExceptionHandler {
 		ErrorResponse error = new ErrorResponse("Validation Failed", details);
 		return new ResponseEntity(error, HttpStatus.BAD_REQUEST);
 	}
-
 }

@@ -19,8 +19,8 @@ import org.springframework.test.web.servlet.MvcResult;
 import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
-import java.time.LocalDateTime;
-import java.time.LocalTime;
+import java.math.BigInteger;
+import java.time.*;
 import java.util.Arrays;
 import java.util.Date;
 import java.util.List;
@@ -43,9 +43,23 @@ class TimeSlotControllerTest {
     @Autowired
     private ObjectMapper objectMapper;
 
+    public static Date toDate(LocalTime localTime) {
+        Instant instant = localTime.atDate(LocalDate.now())
+                .atZone(ZoneId.systemDefault()).toInstant();
+        return toDate(instant);
+    }
+
+    public static Date toDate(Instant instant) {
+        BigInteger milis = BigInteger.valueOf(instant.getEpochSecond()).multiply(
+                BigInteger.valueOf(1000));
+        milis = milis.add(BigInteger.valueOf(instant.getNano()).divide(
+                BigInteger.valueOf(1_000_000)));
+        return new Date(milis.longValue());
+    }
+
     static final List<Timeslot> listOfTimeslots = Arrays.asList(
-            new Timeslot("AM", "Morning", LocalTime.of(0, 0), LocalTime.of(11,59, 59)),
-            new Timeslot("PM", "Afternoon", LocalTime.of(12, 0), LocalTime.of(23,59, 59))
+            new Timeslot("AM", "Morning", toDate(LocalTime.of(0, 0)), toDate(LocalTime.of(11,59, 59))),
+            new Timeslot("PM", "Afternoon", toDate(LocalTime.of(12, 0)), toDate(LocalTime.of(23,59, 59)))
     );
 
     public String asJsonString(final Object obj) {
@@ -125,8 +139,8 @@ class TimeSlotControllerTest {
     @Test
     @WithMockUser(value = "admin",roles={"ADMIN"})
     void updateTs() throws Exception {
-        Timeslot oldTimeslot = new Timeslot("AM", "Morning", LocalTime.of(0, 0), LocalTime.of(11,59, 59));
-        Timeslot newTimeslot = new Timeslot("AM", "Morning new", LocalTime.of(0, 0), LocalTime.of(11,59, 59));
+        Timeslot oldTimeslot = new Timeslot("AM", "Morning", toDate(LocalTime.of(0, 0)), toDate(LocalTime.of(11,59, 59)));
+        Timeslot newTimeslot = new Timeslot("AM", "Morning new", toDate(LocalTime.of(0, 0)), toDate(LocalTime.of(11,59, 59)));
 
         when(timeSlotService.get(oldTimeslot.getAbbreviation())).thenReturn(Optional.of(oldTimeslot));
         when(timeSlotService.update(any(Timeslot.class))).thenReturn(null);
