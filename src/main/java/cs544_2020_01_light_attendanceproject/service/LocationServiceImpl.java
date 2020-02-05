@@ -1,5 +1,7 @@
 package cs544_2020_01_light_attendanceproject.service;
 
+import java.util.Optional;
+
 import org.hibernate.ObjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -17,8 +19,8 @@ public class LocationServiceImpl implements LocationService {
 	private LocationRepository locationDAO;
 
 	@Override
-	public Location findLocationById(long id) throws ObjectNotFoundException {
-		return locationDAO.findById(id).get();
+	public Optional<Location> findLocationById(long id) throws ObjectNotFoundException {
+		return locationDAO.findById(id) ;
 	}
 
 	@Override

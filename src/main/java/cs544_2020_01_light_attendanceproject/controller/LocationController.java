@@ -3,6 +3,7 @@ package cs544_2020_01_light_attendanceproject.controller;
 import java.util.List;
 
 import javax.validation.Valid;
+import javax.validation.constraints.Min;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -21,7 +22,7 @@ import cs544_2020_01_light_attendanceproject.service.LocationService;
 
 @RestController
 @RequestMapping("/locations")
-@Secured({ "ROLE_ADMIN", "ROLE_FACULTY", "ROLE_STUDENT" })
+@Secured({ "ROLE_ADMIN" })
 public class LocationController {
 
 	@Autowired
@@ -34,8 +35,8 @@ public class LocationController {
 	}
 
 	@GetMapping("/id/{id}")
-	public Location retrieveLocationById(@PathVariable long id) {
-		return locationService.findLocationById(id);
+	public Location retrieveLocationById(@PathVariable @Min(1) long id) {
+		return locationService.findLocationById(id).get();
 	}
 
 	@GetMapping("/description/{description}")
@@ -43,16 +44,16 @@ public class LocationController {
 		return locationService.findLocationByDescription(description);
 	}
 
-	@PutMapping("/locations")
+	@PutMapping
 	@ResponseStatus(HttpStatus.CREATED)
 	public Location createLocation(@Valid @RequestBody Location location) {
 		return locationService.createLocation(location);
 	}
 
-	@PutMapping("/locations/{id}")
+	@PutMapping("/{id}")
 	@ResponseStatus(HttpStatus.OK)
-	public Location updateLocation(@Valid @RequestBody Location location, @PathVariable long id) {
-		Location oldLocation = locationService.findLocationById(id);
+	public Location updateLocation(@Valid @RequestBody Location location, @PathVariable @Min(1) long id) {
+		Location oldLocation = locationService.findLocationById(id).get();
 		oldLocation.setDescription(location.getDescription());
 		return locationService.updateLocation(oldLocation);
 	}
@@ -60,7 +61,7 @@ public class LocationController {
 	@DeleteMapping("/locations/{id}")
 	@ResponseStatus(HttpStatus.OK)
 	public Location deleteLocation(@PathVariable long id) {
-		Location oldLocation = locationService.findLocationById(id);
+		Location oldLocation = locationService.findLocationById(id).get();
 		locationService.deleteLocation(oldLocation);
 		return oldLocation;
 	}
