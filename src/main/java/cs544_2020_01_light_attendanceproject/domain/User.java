@@ -1,5 +1,6 @@
 package cs544_2020_01_light_attendanceproject.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import org.hibernate.annotations.NaturalId;
 
 import javax.persistence.*;
@@ -39,7 +40,16 @@ public class User implements Serializable {
     @NotEmpty(message = "Please provide at least one role.")
     private Set<Role> roles;
     @OneToMany(mappedBy = "user")
+    @JsonIgnoreProperties("user")
     private List<Attendance> attendances;
+    @ManyToMany
+    @JsonIgnoreProperties("user")
+    @JoinTable(
+            name = "user_course_offerings",
+            joinColumns = { @JoinColumn(name = "user_id") },
+            inverseJoinColumns = { @JoinColumn(name = "course_offerings_id") }
+    )
+    private List<CourseOffering> courseOfferings;
 
     public User() {}
 
@@ -121,6 +131,14 @@ public class User implements Serializable {
 
     public void setAttendances(List<Attendance> attendances) {
         this.attendances = attendances;
+    }
+
+    public List<CourseOffering> getCourseOfferings() {
+        return courseOfferings;
+    }
+
+    public void setCourseOfferings(List<CourseOffering> courseOfferings) {
+        this.courseOfferings = courseOfferings;
     }
 
     @Override

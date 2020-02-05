@@ -1,5 +1,8 @@
 package cs544_2020_01_light_attendanceproject.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
 import java.util.List;
@@ -16,6 +19,10 @@ public class Course {
     @NotEmpty(message = "Please provide a description;")
     @Column(nullable = false)
     private String description;
+    @OneToMany(mappedBy = "course", cascade = CascadeType.ALL)
+    @JsonIgnoreProperties("course")
+    private List<CourseOffering> courseOfferings;
+
     public Course() {}
     public Course(Long id, String name, String description) {
         this.id = id;
@@ -45,6 +52,14 @@ public class Course {
 
     public void setDescription(String description) {
         this.description = description;
+    }
+
+    public List<CourseOffering> getCourseOfferings() {
+        return courseOfferings;
+    }
+
+    public void setCourseOfferings(List<CourseOffering> courseOfferings) {
+        this.courseOfferings = courseOfferings;
     }
 
     @Override

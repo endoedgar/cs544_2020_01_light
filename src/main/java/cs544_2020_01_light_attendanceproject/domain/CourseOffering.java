@@ -21,6 +21,7 @@ public class CourseOffering {
 
     @ManyToOne
     @NotNull(message = "please specify a course")
+    @JsonIgnoreProperties("courseOfferings")
     private Course course;
     @Temporal(TemporalType.DATE)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone="CST")
@@ -34,6 +35,9 @@ public class CourseOffering {
     @OneToMany(mappedBy = "courseOffering",cascade = CascadeType.ALL)
     @Valid
     private List<Session> sessions;
+    @JsonIgnoreProperties("courseOfferings")
+    @ManyToMany(mappedBy = "courseOfferings")
+    private List<User> students;
 
 
     public CourseOffering() {}
@@ -80,6 +84,14 @@ public class CourseOffering {
 
     public List<Session> getSessions() {
         return sessions;
+    }
+
+    public List<User> getStudents() {
+        return students;
+    }
+
+    public void setStudents(List<User> students) {
+        this.students = students;
     }
 
     public void setSessions(List<Session> sessions) {

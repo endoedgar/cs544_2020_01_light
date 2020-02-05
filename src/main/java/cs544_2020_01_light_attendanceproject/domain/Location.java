@@ -1,10 +1,8 @@
 package cs544_2020_01_light_attendanceproject.domain;
 
-import javax.persistence.Entity;
-import javax.persistence.GeneratedValue;
-import javax.persistence.GenerationType;
-import javax.persistence.Id;
+import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -14,6 +12,9 @@ public class Location {
     private Long id;
     @NotEmpty(message = "Please provide a description.")
     private String description;
+
+    @OneToMany(mappedBy = "location", cascade = CascadeType.ALL)
+    private List<Attendance> attendances;
 
     public Location() { }
 
