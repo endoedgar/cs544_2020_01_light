@@ -59,7 +59,19 @@ class CourseControllerTest {
 
     @Test
     @WithMockUser(value = "admin",roles={"ADMIN"})
-    void all() {
+    void all() throws Exception {
+        when(locationService.listCourses()).thenReturn(listOfMockedCourses);
+
+        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders
+                .get("/course")
+                .contentType(MediaType.APPLICATION_JSON)
+                .accept(MediaType.APPLICATION_JSON)
+        ).andExpect(MockMvcResultMatchers.status().isOk())
+                .andReturn();
+
+        List<Course> returnedListOfLocations = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), new TypeReference<List<Course>>() {});
+
+        assertThat(returnedListOfLocations).isEqualTo(listOfMockedCourses);
     }
 
     @Test
@@ -75,17 +87,6 @@ class CourseControllerTest {
     @Test
     @WithMockUser(value = "admin",roles={"ADMIN"})
     void findCourseByName() throws Exception {
-        when(locationService.listCourses()).thenReturn(listOfMockedCourses);
 
-        MvcResult mvcResult = mockMvc.perform(MockMvcRequestBuilders
-                .get("/course")
-                .contentType(MediaType.APPLICATION_JSON)
-                .accept(MediaType.APPLICATION_JSON)
-        ).andExpect(MockMvcResultMatchers.status().isOk())
-                .andReturn();
-
-        List<Course> returnedListOfLocations = objectMapper.readValue(mvcResult.getResponse().getContentAsString(), new TypeReference<List<Course>>() {});
-
-        assertThat(returnedListOfLocations).isEqualTo(listOfMockedCourses);
     }
 }
