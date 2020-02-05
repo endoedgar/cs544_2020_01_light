@@ -6,17 +6,14 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.when;
 
 import cs544_2020_01_light_attendanceproject.controller.UserController;
-import cs544_2020_01_light_attendanceproject.dao.UserRepository;
 import cs544_2020_01_light_attendanceproject.domain.User;
 import cs544_2020_01_light_attendanceproject.exceptions.AdminsCannotDeleteThemselvesException;
-import cs544_2020_01_light_attendanceproject.exceptions.UserNotFoundException;
+import cs544_2020_01_light_attendanceproject.exceptions.ItemNotFoundException;
 import cs544_2020_01_light_attendanceproject.service.UserService;
-import net.bytebuddy.implementation.bytecode.Throw;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeAll;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.ArgumentMatchers;
 import org.mockito.InjectMocks;
 import org.mockito.Mock;
 import org.mockito.Mockito;
@@ -152,7 +149,7 @@ public class UserControllerTest {
     public void testFindNonExistingUser() {
         when(userService.findOneUser(any(String.class))).thenReturn(Optional.ofNullable(null));
 
-        Assertions.assertThrows(UserNotFoundException.class, () -> {
+        Assertions.assertThrows(ItemNotFoundException.class, () -> {
             userController.one("nonExistingUser");
         });
     }

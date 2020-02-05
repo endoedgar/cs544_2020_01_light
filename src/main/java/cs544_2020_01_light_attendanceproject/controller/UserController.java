@@ -4,6 +4,7 @@ import java.net.URI;
 
 import javax.validation.Valid;
 
+import cs544_2020_01_light_attendanceproject.exceptions.ItemNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -22,7 +23,6 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import cs544_2020_01_light_attendanceproject.domain.User;
 import cs544_2020_01_light_attendanceproject.exceptions.AdminsCannotDeleteThemselvesException;
-import cs544_2020_01_light_attendanceproject.exceptions.UserNotFoundException;
 import cs544_2020_01_light_attendanceproject.service.UserService;
 
 @RestController
@@ -36,7 +36,7 @@ public class UserController {
     }
 
     @Secured(value = {"ROLE_ADMIN"})
-    @PostMapping("/")
+    @PostMapping("")
     @ResponseStatus(HttpStatus.CREATED)
     public ResponseEntity<Object> newUser(@RequestBody @Valid User user) {
         userService.registerNewUserAccount(user);
@@ -50,7 +50,7 @@ public class UserController {
     }
 
     @Secured(value = {"ROLE_ADMIN"})
-    @GetMapping("/")
+    @GetMapping("")
     public Iterable<User> all() {
         return userService.listUsers();
     }
@@ -58,7 +58,7 @@ public class UserController {
     @Secured(value = {"ROLE_ADMIN","ROLE_FACULTY","ROLE_STUDENT"})
     @GetMapping("/{username}")
     public User one(@PathVariable String username) {
-        return userService.findOneUser(username).orElseThrow(() -> new UserNotFoundException(username));
+        return userService.findOneUser(username).orElseThrow(() -> new ItemNotFoundException(username, User.class));
     }
 
     @Secured(value = {"ROLE_ADMIN"})
