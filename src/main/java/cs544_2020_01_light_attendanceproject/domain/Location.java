@@ -13,10 +13,10 @@ public class Location {
     @NotEmpty(message = "Please provide a description.")
     private String description;
 
-    @OneToMany(mappedBy = "location", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "location")
     private List<Attendance> attendances;
 
-    @OneToMany(mappedBy = "location", cascade = CascadeType.ALL)
+    @OneToMany(mappedBy = "location")
     private List<CourseOffering> courseOfferings;
 
     public Location() { }
@@ -26,7 +26,7 @@ public class Location {
         this.description = description;
     }
 
-    public long getId() {
+    public Long getId() {
         return id;
     }
 
