@@ -135,4 +135,7 @@ public class CourseOffering {
             u.removeCourseOffering(this);
         }
     }
+    public void removeuser(User user) {
+        this.students.remove(user);
+    }
 }
