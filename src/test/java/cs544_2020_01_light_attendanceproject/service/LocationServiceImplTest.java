@@ -6,16 +6,13 @@ import java.util.List;
 
 import javax.transaction.Transactional;
 
-import org.junit.Test;
-import org.junit.runner.RunWith;
+import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.test.context.junit4.SpringJUnit4ClassRunner;
 
 import cs544_2020_01_light_attendanceproject.dao.LocationRepository;
 import cs544_2020_01_light_attendanceproject.domain.Location;
 
-@RunWith(SpringJUnit4ClassRunner.class)
 @Transactional
 @SpringBootTest
 public class LocationServiceImplTest {
