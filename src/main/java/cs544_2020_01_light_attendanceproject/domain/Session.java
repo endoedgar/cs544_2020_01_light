@@ -2,10 +2,9 @@ package cs544_2020_01_light_attendanceproject.domain;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonView;
 
 import javax.persistence.*;
-import javax.validation.Valid;
-import javax.validation.constraints.NotEmpty;
 import java.util.Date;
 import java.util.List;
 import java.util.Objects;
@@ -14,16 +13,21 @@ import java.util.Objects;
 public class Session {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JsonView(SummaryView.class)
     private Long id;
     @ManyToOne//(cascade = CascadeType.ALL)
+    @JsonView(DetailView.class)
     private CourseOffering courseOffering;
     @ManyToOne
+    @JsonView(SummaryView.class)
     private Timeslot timeslot;
+    @JsonView(SummaryView.class)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone="CST")
     @Temporal(TemporalType.DATE)
     private Date date;
     @OneToMany(mappedBy = "session", cascade = CascadeType.REMOVE)
     @JsonIgnoreProperties("session")
+    @JsonView(DetailView.class)
     private List<Attendance> attendances;
 
     public Session() {}
@@ -73,7 +77,6 @@ public class Session {
         if (o == null || getClass() != o.getClass()) return false;
         Session session = (Session) o;
         return Objects.equals(id, session.id) &&
-                Objects.equals(courseOffering, session.courseOffering) &&
                 Objects.equals(timeslot, session.timeslot) &&
                 Objects.equals(date, session.date);
     }
@@ -88,6 +91,9 @@ public class Session {
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, courseOffering, timeslot, date);
+        return Objects.hash(id, timeslot, date);
     }
+
+    public interface SummaryView extends CourseOffering.SummaryView, Timeslot.SummaryView {}
+    public interface DetailView extends SummaryView, Attendance.SummaryView {}
 }

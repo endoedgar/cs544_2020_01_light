@@ -4,9 +4,9 @@ import java.net.URI;
 
 import javax.validation.Valid;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import cs544_2020_01_light_attendanceproject.exceptions.ItemNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.annotation.Secured;
 import org.springframework.security.core.context.SecurityContextHolder;
@@ -17,7 +17,6 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
-import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
@@ -50,12 +49,14 @@ public class UserController {
 
     @Secured(value = {"ROLE_ADMIN"})
     @GetMapping
+    @JsonView(User.SummaryView.class)
     public Iterable<User> all() {
         return userService.listUsers();
     }
 
     @Secured(value = {"ROLE_ADMIN","ROLE_FACULTY","ROLE_STUDENT"})
     @GetMapping("/{username}")
+    @JsonView(User.DetailView.class)
     public User one(@PathVariable String username) {
         return userService.findUserByUsername(username)
         		.orElseThrow(() -> new ItemNotFoundException(username, User.class));

@@ -2,6 +2,7 @@ package cs544_2020_01_light_attendanceproject.controller;
 
 import javax.validation.Valid;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import cs544_2020_01_light_attendanceproject.domain.User;
 import cs544_2020_01_light_attendanceproject.exceptions.ItemNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -35,6 +36,7 @@ public class CourseController {
 	}
 
 	@GetMapping
+	@JsonView(Course.SummaryView.class)
 	public Iterable<Course> all() {
 		return courseService.listCourses();
 	}
@@ -63,6 +65,7 @@ public class CourseController {
 	}
 
 	@GetMapping("/{name}")
+	@JsonView(Course.DetailView.class)
 	public Course findCourseByName(@PathVariable String name) {
 		return courseService.findCourseByName(name).orElseThrow(() -> new ItemNotFoundException(name, Course.class));
 	}

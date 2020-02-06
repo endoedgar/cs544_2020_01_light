@@ -1,5 +1,8 @@
 package cs544_2020_01_light_attendanceproject.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonView;
+
 import javax.persistence.*;
 import javax.validation.constraints.NotEmpty;
 import java.util.List;
@@ -9,14 +12,19 @@ import java.util.Objects;
 public class Location {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JsonView(SummaryView.class)
     private Long id;
     @NotEmpty(message = "Please provide a description.")
+    @JsonView(SummaryView.class)
     private String description;
 
     @OneToMany(mappedBy = "location")
+    @JsonView(DetailView.class)
+    @JsonIgnoreProperties("location")
     private List<Attendance> attendances;
 
     @OneToMany(mappedBy = "location")
+    @JsonView(DetailView.class)
     private List<CourseOffering> courseOfferings;
 
     public Location() { }
@@ -71,4 +79,7 @@ public class Location {
     public int hashCode() {
         return Objects.hash(id, description);
     }
+
+    public interface SummaryView {}
+    public interface DetailView extends SummaryView, Attendance.SummaryView, CourseOffering.SummaryView {}
 }
