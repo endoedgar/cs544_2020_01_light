@@ -13,6 +13,8 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
+import com.fasterxml.jackson.annotation.JsonView;
+
 import cs544_2020_01_light_attendanceproject.dao.AttendanceDTO;
 import cs544_2020_01_light_attendanceproject.domain.Attendance;
 import cs544_2020_01_light_attendanceproject.domain.Course;
@@ -49,6 +51,7 @@ public class AttendanceController {
 	private CourseOfferingService courseOfferingService;
 
 	@GetMapping("/session/{sessionId}")
+	@JsonView(User.SummaryView.class)
 	public Iterable<User> studentAttendanceBySession(@PathVariable Long sessionId) {
 		Session session = sessionService.findSessionById(sessionId).get();
 		Iterable<User> list = attendanceService.fetchStudentAttendanceBySession(session.getId());
@@ -56,6 +59,7 @@ public class AttendanceController {
 	}
 
 	@GetMapping("/courseOffering/{courseOfferingId}")
+	@JsonView(User.SummaryView.class)
 	public Iterable<User> studentAttendanceByCourseOffering(@PathVariable Long courseOfferingId) {
 		CourseOffering courseOffering = courseOfferingService.getCourseOffering(courseOfferingId).get();
 		Iterable<User> list = attendanceService.fetchStudentAttendanceByCourseOffering(courseOffering.getId());
@@ -63,6 +67,7 @@ public class AttendanceController {
 	}
 
 	@GetMapping("/course/{courseId}")
+	@JsonView(User.SummaryView.class)
 	public Iterable<User> studentAttendanceByCourse(@PathVariable Long courseId) {
 		Course course = courseService.findCourseById(courseId).get();
 		Iterable<User> list = attendanceService.fetchStudentAttendanceByCourse(course.getId());
@@ -70,6 +75,7 @@ public class AttendanceController {
 	}
 
 	@GetMapping("/student/{studentId}")
+	@JsonView(Attendance.SummaryView.class)
 	public Iterable<Attendance> studentAttendanceByStudent(@PathVariable Long studentId) {
 		User student = userService.findUserById(studentId);
 		Iterable<Attendance> list = attendanceService.fetchStudentAttendanceByStudent(student.getId());
@@ -80,7 +86,7 @@ public class AttendanceController {
 	public List<AttendanceDTO> retrieveAttendanceById(@PathVariable Long id) {
 		return (List<AttendanceDTO>) attendanceService.fetchAttendanceSummaryById(id);
 	}
-	
+
 	@GetMapping("/session/avg/{sessionId}")
 	public List<AttendanceDTO> fetchAttendanceSummary(@PathVariable Long sessionId) {
 		return (List<AttendanceDTO>) attendanceService.fetchAttendanceSummary(sessionId);
