@@ -58,4 +58,7 @@ public class Attendance {
     public void setLocation(Location location) {
         this.location = location;
     }
+    public void removeuser(User user) {
+        this.user = null;
+    }
 }

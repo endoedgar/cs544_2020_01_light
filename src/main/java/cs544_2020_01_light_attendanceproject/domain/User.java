@@ -38,6 +38,7 @@ public class User implements Serializable {
     private String email;
     @ManyToMany
     @NotEmpty(message = "Please provide at least one role.")
+    @JoinTable
     private Set<Role> roles;
     @OneToMany(mappedBy = "user")
     @JsonIgnoreProperties("user")
@@ -166,4 +167,19 @@ public class User implements Serializable {
     public void removeCourseOffering(CourseOffering courseOffering) {
         this.courseOfferings.remove(courseOffering);
     }
+    @PreRemove
+    private void removeAssociationsWithStudentsCourseOffering() {
+        for (CourseOffering u : this.getCourseOfferings() ){
+            u.removeuser(this);
+        }
+        for (Attendance u : this.getAttendances() ){
+            u.removeuser(this);
+        }
+
+        for(Role r : this.getRoles()){
+            r.removeuser(this);
+        }
+    }
+
+
 }

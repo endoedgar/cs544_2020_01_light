@@ -1,19 +1,29 @@
 package cs544_2020_01_light_attendanceproject.domain;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
+import javax.persistence.*;
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
 public class Role {
     @Id
     private String type;
-
+    @ManyToMany(mappedBy = "roles")
+    private List<User> user = new ArrayList<>();
     public Role() {}
     public Role(String type) { this.type = type; }
 
     public String getType() {
         return type;
+    }
+
+    public void setUser(List<User> user) {
+        this.user = user;
+    }
+
+    public List<User> getUser() {
+        return user;
     }
 
     private void setType(String type) {
@@ -31,5 +41,8 @@ public class Role {
     @Override
     public int hashCode() {
         return Objects.hash(type);
+    }
+    public void removeuser(User user) {
+        this.user.remove(user);
     }
 }
