@@ -43,3 +43,8 @@ INSERT IGNORE INTO user_course_offerings (user_id, course_offerings_id) VALUES
 (5, 1), /* id: 5 */
 (6, 1), /* id: 6 */
 (7, 3); /* id: 7 */
+
+INSERT IGNORE INTO attendance (location_id, session_id, bar_code_id) VALUES
+(1, 1,"003-XX-YYYY"),
+(1, 2,"003-XX-YYYY"),
+(1, 1,"004-XX-YYYY");
