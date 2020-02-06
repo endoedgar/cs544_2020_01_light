@@ -51,6 +51,12 @@ public class AttendanceDTO implements Serializable {
 		this.courseOffering = courseOffering;
 	}
 
+	public AttendanceDTO(User student, Long average) {
+		super();
+		this.student = student;
+		this.average = average;
+	}
+
 	public User getStudent() {
 		return student;
 	}

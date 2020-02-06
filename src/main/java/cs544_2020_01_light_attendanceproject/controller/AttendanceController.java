@@ -15,12 +15,14 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import cs544_2020_01_light_attendanceproject.dao.AttendanceDTO;
 import cs544_2020_01_light_attendanceproject.domain.Attendance;
+import cs544_2020_01_light_attendanceproject.domain.Course;
 import cs544_2020_01_light_attendanceproject.domain.CourseOffering;
 import cs544_2020_01_light_attendanceproject.domain.Location;
 import cs544_2020_01_light_attendanceproject.domain.Session;
 import cs544_2020_01_light_attendanceproject.domain.User;
 import cs544_2020_01_light_attendanceproject.service.AttendanceService;
 import cs544_2020_01_light_attendanceproject.service.CourseOfferingService;
+import cs544_2020_01_light_attendanceproject.service.CourseService;
 import cs544_2020_01_light_attendanceproject.service.LocationService;
 import cs544_2020_01_light_attendanceproject.service.SessionService;
 import cs544_2020_01_light_attendanceproject.service.UserService;
@@ -41,21 +43,47 @@ public class AttendanceController {
 	private UserService userService;
 
 	@Autowired
+	private CourseService courseService;
+
+	@Autowired
 	private CourseOfferingService courseOfferingService;
 
-	@GetMapping("/session/{sessionId}/courseOffering/{courseOfferingId}")
-	public Iterable<AttendanceDTO> attendanceSummary(@PathVariable Long sessionId,
-			@PathVariable Long courseOfferingId) {
+	@GetMapping("/session/{sessionId}")
+	public Iterable<User> studentAttendanceBySession(@PathVariable Long sessionId) {
 		Session session = sessionService.findSessionById(sessionId).get();
+		Iterable<User> list = attendanceService.fetchStudentAttendanceBySession(session.getId());
+		return list;
+	}
+
+	@GetMapping("/courseOffering/{courseOfferingId}")
+	public Iterable<User> studentAttendanceByCourseOffering(@PathVariable Long courseOfferingId) {
 		CourseOffering courseOffering = courseOfferingService.getCourseOffering(courseOfferingId).get();
-		Iterable<AttendanceDTO> list = attendanceService.fetchAttendanceSummary(session.getId(), courseOffering.getId(),
-				courseOffering.getCourse().getId());
+		Iterable<User> list = attendanceService.fetchStudentAttendanceByCourseOffering(courseOffering.getId());
+		return list;
+	}
+
+	@GetMapping("/course/{courseId}")
+	public Iterable<User> studentAttendanceByCourse(@PathVariable Long courseId) {
+		Course course = courseService.findCourseById(courseId).get();
+		Iterable<User> list = attendanceService.fetchStudentAttendanceByCourse(course.getId());
+		return list;
+	}
+
+	@GetMapping("/student/{studentId}")
+	public Iterable<Attendance> studentAttendanceByStudent(@PathVariable Long studentId) {
+		User student = userService.findUserById(studentId);
+		Iterable<Attendance> list = attendanceService.fetchStudentAttendanceByStudent(student.getId());
 		return list;
 	}
 
 	@GetMapping("/{id}")
 	public List<AttendanceDTO> retrieveAttendanceById(@PathVariable Long id) {
 		return (List<AttendanceDTO>) attendanceService.fetchAttendanceSummaryById(id);
+	}
+	
+	@GetMapping("/session/avg/{sessionId}")
+	public List<AttendanceDTO> fetchAttendanceSummary(@PathVariable Long sessionId) {
+		return (List<AttendanceDTO>) attendanceService.fetchAttendanceSummary(sessionId);
 	}
 
 	@PutMapping("/user/{userId}/session/{sessionId}/location/{locationId}")
