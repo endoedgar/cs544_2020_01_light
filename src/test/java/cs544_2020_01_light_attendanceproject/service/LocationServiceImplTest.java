@@ -1,6 +1,6 @@
 package cs544_2020_01_light_attendanceproject.service;
 
-import static org.junit.Assert.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertEquals;
 
 import java.util.List;
 

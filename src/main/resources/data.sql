@@ -32,14 +32,23 @@ REPLACE INTO timeslot (abbreviation, description, begin_time, end_time) VALUES
 REPLACE INTO course_offering(id, course_id, start_date, end_date, location_id) VALUES
 (1, 1, "2020-05-01", "2020-06-01", 1),
 (2, 2, "2020-06-01", "2020-06-01", 1),
-(3, 3, "2020-05-01", "2020-06-01", 1);
+(3, 3, "2020-05-01", "2020-06-01", 1),
+(4, 1, "2020-07-01", "2020-08-01", 1),
+(5, 1, "2020-08-01", "2020-09-01", 1);
 
 REPLACE INTO `session`(id, course_offering_id, timeslot_abbreviation, `date`) VALUES
 (1, 1, "AM", "2020-05-10"),
-(2, 1, "AM", "2020-05-11");
+(2, 1, "AM", "2020-05-11"),
+(3, 1, "AM", "2020-05-12"),
+(4, 1, "AM", "2020-05-13");
 
 INSERT IGNORE INTO user_course_offerings (user_id, course_offerings_id) VALUES
 (4, 1), /* id: 4 */
 (5, 1), /* id: 5 */
 (6, 1), /* id: 6 */
 (7, 3); /* id: 7 */
+
+INSERT IGNORE INTO attendance (location_id, session_id, bar_code_id) VALUES
+(1, 1,"003-XX-YYYY"),
+(1, 2,"003-XX-YYYY"),
+(1, 1,"004-XX-YYYY");
