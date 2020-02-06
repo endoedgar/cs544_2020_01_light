@@ -57,7 +57,8 @@ public class UserController {
     @Secured(value = {"ROLE_ADMIN","ROLE_FACULTY","ROLE_STUDENT"})
     @GetMapping("/{username}")
     public User one(@PathVariable String username) {
-        return userService.findUserByUsername(username).orElseThrow(() -> new ItemNotFoundException(username, User.class));
+        return userService.findUserByUsername(username)
+        		.orElseThrow(() -> new ItemNotFoundException(username, User.class));
     }
 
     @Secured(value = {"ROLE_ADMIN"})

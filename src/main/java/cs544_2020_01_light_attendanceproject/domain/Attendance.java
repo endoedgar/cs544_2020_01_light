@@ -1,8 +1,13 @@
 package cs544_2020_01_light_attendanceproject.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
+import javax.persistence.JoinColumn;
+import javax.persistence.ManyToOne;
 
-import javax.persistence.*;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 @Entity
 public class Attendance {
@@ -10,6 +15,7 @@ public class Attendance {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private long id;
     @ManyToOne
+    @JsonIgnoreProperties("attendances")
     @JoinColumn(name = "barCodeId", referencedColumnName = "barCodeId")
     private User user;
     @ManyToOne
