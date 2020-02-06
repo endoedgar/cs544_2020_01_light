@@ -52,6 +52,7 @@ public class SessionController {
 
     @DeleteMapping("/{id}")
     @Secured({ "ROLE_ADMIN"})
+    @JsonView(Session.DetailView.class)
     public Session deleteSession(@PathVariable Long id) {
         return sessionService.findSessionById(id).map(s -> {
             sessionService.deleteSession(s);
@@ -61,6 +62,7 @@ public class SessionController {
 
     @PutMapping("/{id}")
     @Secured({ "ROLE_ADMIN"})
+    @JsonView(Session.DetailView.class)
     public Session update(@PathVariable Long id, @RequestBody @Valid Session newSession) {
         Session oldSession = sessionService.findSessionById(id).orElse(newSession);
         oldSession.setCourseOffering(newSession.getCourseOffering());

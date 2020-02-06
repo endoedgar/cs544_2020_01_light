@@ -1,6 +1,7 @@
 package cs544_2020_01_light_attendanceproject.controller;
 
 import java.net.URI;
+import java.util.stream.Collectors;
 
 import javax.validation.Valid;
 
@@ -64,6 +65,7 @@ public class UserController {
 
     @Secured(value = {"ROLE_ADMIN"})
     @DeleteMapping("/{username}")
+    @JsonView(User.DetailView.class)
     public User deleteUser(@PathVariable String username) {
         String currentUsername = SecurityContextHolder.getContext().getAuthentication().getName();
         if(username.equals(currentUsername))
@@ -78,10 +80,10 @@ public class UserController {
 
     @Secured(value = {"ROLE_ADMIN"})
     @PutMapping("/{username}")
+    @JsonView(User.DetailView.class)
     public User replaceUser(@RequestBody @Valid User newUser, @PathVariable String username) {
         User oldUser = userService.findUserByUsername(username).orElse(newUser);
-        oldUser.setAttendances(newUser.getAttendances());
-        oldUser.setRoles(newUser.getRoles());
+        oldUser.setRoles(newUser.getRoles().stream().collect(Collectors.toSet()));
         oldUser.setBarCodeId(newUser.getBarCodeId());
         oldUser.setEmail(newUser.getEmail());
         oldUser.setEnabled(newUser.isEnabled());

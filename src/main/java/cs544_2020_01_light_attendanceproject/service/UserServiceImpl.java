@@ -30,10 +30,11 @@ public class UserServiceImpl implements UserService {
 
 	@Transactional(readOnly = true)
 	public void validateUniqueUserFields(@Valid User account) {
-		if (userRepository.existsUserByUsernameAndIdIsNot(account.getUsername(), account.getId())) {
+		Long accountId = Optional.ofNullable(account.getId()).orElse(0L);
+		if (userRepository.existsUserByUsernameAndIdIsNot(account.getUsername(), accountId)) {
 			throw new ValidationException("Username " + account.getUsername() + " is already taken.");
 		}
-		if (userRepository.existsUserByBarCodeIdAndIdIsNot(account.getBarCodeId(), account.getId())) {
+		if (userRepository.existsUserByBarCodeIdAndIdIsNot(account.getBarCodeId(), accountId)) {
 			throw new ValidationException("Barcode " + account.getBarCodeId() + " is already taken.");
 		}
 	}
