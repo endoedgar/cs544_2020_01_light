@@ -15,7 +15,7 @@ public class AttandanceServiceImpl implements AttendanceService {
 
 	@Override
 	public Iterable<AttendanceDTO> fetchAttendanceSummary(Long sessionId, Long courseOfferingId, Long courseId) {
-		return attendanceRepository.fetchAttandanceSummary(sessionId, courseOfferingId, courseId);
+		return attendanceRepository.fetchAttandanceSummary();
 	}
 
 	@Override
