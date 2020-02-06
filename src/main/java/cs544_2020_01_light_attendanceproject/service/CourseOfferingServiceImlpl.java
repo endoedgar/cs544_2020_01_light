@@ -2,14 +2,13 @@ package cs544_2020_01_light_attendanceproject.service;
 
 import cs544_2020_01_light_attendanceproject.dao.CourseOfferingRepository;
 import cs544_2020_01_light_attendanceproject.dao.CourseRepository;
-import cs544_2020_01_light_attendanceproject.domain.Course;
 import cs544_2020_01_light_attendanceproject.domain.CourseOffering;
 import cs544_2020_01_light_attendanceproject.domain.Session;
-import cs544_2020_01_light_attendanceproject.domain.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.swing.text.html.Option;
 import javax.validation.Valid;
 import javax.validation.ValidationException;
 import java.util.List;
@@ -40,6 +39,11 @@ public class CourseOfferingServiceImlpl implements CourseOfferingService {
     public Optional<CourseOffering> getCourseOffering(Long id) {
         return courseOfferingRepository.findById(id);
     }
+    @Transactional(readOnly = true)// return sessions
+    public Optional<List<Session>> getCourseSessions(Long id) {
+        return  courseOfferingRepository.findById(id).map(co ->
+                Optional.ofNullable(co.getSessions())).orElse(Optional.empty());
+    }
     @Transactional(readOnly = true)
     public List<CourseOffering> getAllCourseOffering() {
         return courseOfferingRepository.findAll();
@@ -53,9 +57,5 @@ public class CourseOfferingServiceImlpl implements CourseOfferingService {
         validateCourseOfferingBusinessLogic(courseOffering);
         return courseOfferingRepository.save(courseOffering);
     }
-    //view session list
-    @Transactional
-    public List<Session> getSessions(Long id){
-        return courseOfferingRepository.getOne(id).getSessions();
-    }
+
 }

@@ -8,21 +8,26 @@ import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
 
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
+import com.fasterxml.jackson.annotation.JsonView;
 
 @Entity
 public class Attendance {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JsonView(SummaryView.class)
     private long id;
     @ManyToOne
     @JsonIgnoreProperties("attendances")
     @JoinColumn(name = "barCodeId", referencedColumnName = "barCodeId")
+    @JsonView(SummaryView.class)
     private User user;
     @ManyToOne
     @JsonIgnoreProperties("attendance")
+    @JsonView(SummaryView.class)
     private Session session;
     @ManyToOne
     @JsonIgnoreProperties("location")
+    @JsonView(SummaryView.class)
     private Location location;
 
     public Attendance() {}
@@ -58,4 +63,9 @@ public class Attendance {
     public void setLocation(Location location) {
         this.location = location;
     }
+    public void removeuser(User user) {
+        this.user = null;
+    }
+
+    public interface SummaryView extends User.SummaryView, Session.SummaryView, Location.SummaryView  {}
 }

@@ -25,31 +25,43 @@ import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 public class User implements Serializable {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JsonView(SummaryView.class)
     private Long id;
     @NotEmpty(message = "Please provide a first name.")
+    @JsonView(SummaryView.class)
     private String firstName;
     @NotEmpty(message = "Please provide a last name.")
+    @JsonView(SummaryView.class)
     private String lastName;
     @NotEmpty(message = "Please provide a password.")
+    @JsonView(SummaryView.class)
     private String password;
+    @JsonView(SummaryView.class)
     private boolean enabled;
     @Column(unique = true)
     @NotEmpty(message = "Please provide an username.")
+    @JsonView(SummaryView.class)
     private String username;
     @Column(unique = true)
     @Pattern(regexp = "^\\d{3}-[a-zA-z]{2}-[a-zA-Z]{4}$", message = "Please provide a valid bar code (pattern 000-xx-yyyy)")
     @NotEmpty(message = "Please provide a bar code.")
+    @JsonView(SummaryView.class)
     private String barCodeId;
     @NotEmpty(message = "Please provide an email.")
     @Email(message = "Please provide a valid email.")
+    @JsonView(SummaryView.class)
     private String email;
     @ManyToMany
     @NotEmpty(message = "Please provide at least one role.")
+    @JsonView(SummaryView.class)
+    @JoinTable
     private Set<Role> roles;
-    @OneToMany(mappedBy = "user")
+    @OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
     @JsonIgnoreProperties("user")
+    @JsonView(DetailView.class)
     private List<Attendance> attendances;
-    @ManyToMany
+    @ManyToMany(fetch = FetchType.LAZY)
+    @JsonView(DetailView.class)
     @JsonIgnoreProperties("user")
     @JoinTable(
             name = "user_course_offerings",
@@ -161,12 +173,31 @@ public class User implements Serializable {
                 Objects.equals(username, user.username) &&
                 Objects.equals(barCodeId, user.barCodeId) &&
                 Objects.equals(email, user.email) &&
-                Objects.equals(roles, user.roles) &&
-                Objects.equals(attendances, user.attendances);
+                Objects.equals(roles, user.roles);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, firstName, lastName, password, enabled, username, barCodeId, email, roles, attendances);
+        return Objects.hash(id, firstName, lastName, password, enabled, username, barCodeId, email, roles);
     }
+
+    public void removeCourseOffering(CourseOffering courseOffering) {
+        this.courseOfferings.remove(courseOffering);
+    }
+    @PreRemove
+    private void removeAssociationsWithStudentsCourseOffering() {
+        for (CourseOffering u : this.getCourseOfferings() ){
+            u.removeuser(this);
+        }
+        for (Attendance u : this.getAttendances() ){
+            u.removeuser(this);
+        }
+
+        for(Role r : this.getRoles()){
+            r.removeuser(this);
+        }
+    }
+
+    public interface SummaryView extends Role.SummaryView {}
+    public interface DetailView extends SummaryView, Attendance.SummaryView, CourseOffering.SummaryView {}
 }

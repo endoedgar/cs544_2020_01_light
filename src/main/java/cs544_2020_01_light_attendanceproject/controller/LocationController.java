@@ -6,6 +6,8 @@ import java.util.List;
 import javax.validation.Valid;
 import javax.validation.constraints.Min;
 
+import com.fasterxml.jackson.annotation.JsonView;
+import cs544_2020_01_light_attendanceproject.domain.CourseOffering;
 import org.hibernate.ObjectNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -34,17 +36,20 @@ public class LocationController {
 	private LocationService locationService;
 
 	@GetMapping
+	@JsonView(Location.SummaryView.class)
 	@ResponseStatus(HttpStatus.OK)
 	public List<Location> retrieveAllLocations() {
 		return (List<Location>) locationService.findAllLocations();
 	}
 
 	@GetMapping("/id/{id}")
+	@JsonView(Location.DetailView.class)
 	public Location retrieveLocationById(@PathVariable @Min(1) long id) {
 		return locationService.findLocationById(id).orElseThrow(() -> new ObjectNotFoundException(Location.class, "Location not found by description."));
 	}
 
 	@GetMapping("/description/{description}")
+	@JsonView(Location.DetailView.class)
 	public Location findByDescription(@PathVariable String description) {
 		return locationService.findLocationByDescription(description).orElseThrow(() -> new ObjectNotFoundException(Location.class, "Location not found by description."));
 	}
