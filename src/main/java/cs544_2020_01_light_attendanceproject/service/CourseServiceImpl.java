@@ -5,11 +5,9 @@ import java.util.Optional;
 import javax.validation.Valid;
 
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.security.core.userdetails.UsernameNotFoundException;
 import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
-import cs544_2020_01_light_attendanceproject.dao.CourseRepository;
 import cs544_2020_01_light_attendanceproject.dao.CourseRepository;
 import cs544_2020_01_light_attendanceproject.domain.Course;
 
@@ -21,7 +19,7 @@ public class CourseServiceImpl implements CourseService {
 	public CourseServiceImpl(CourseRepository courseRepository) {
 		this.courseRepository = courseRepository;
 	}
-	 
+
 	@Override
 	@Transactional(readOnly = true)
 	public Optional<Course> findCourseByName(String name) {
@@ -36,7 +34,7 @@ public class CourseServiceImpl implements CourseService {
 	@Override
 	public void deleteCourse(Course course) {
 		courseRepository.delete(course);
-		
+
 	}
 
 	@Override
@@ -50,6 +48,9 @@ public class CourseServiceImpl implements CourseService {
 		return courseRepository.findAll();
 	}
 
-
+	@Override
+	public Optional<Course> findCourseById(Long courseId) {
+		return courseRepository.findById(courseId);
+	}
 
 }
