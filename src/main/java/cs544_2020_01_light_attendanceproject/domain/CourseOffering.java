@@ -32,8 +32,7 @@ public class CourseOffering {
     @NotNull(message = "please specify endDate")
     private Date endDate;
     @JsonIgnoreProperties("courseOffering")
-    @OneToMany(mappedBy = "courseOffering",cascade = CascadeType.ALL)
-    @Valid
+    @OneToMany(mappedBy = "courseOffering",cascade = CascadeType.REMOVE)
     private List<Session> sessions;
     @JsonIgnoreProperties("courseOfferings")
     @ManyToMany(mappedBy = "courseOfferings")
@@ -43,7 +42,6 @@ public class CourseOffering {
     @ManyToOne
     @NotNull(message = "please specify a location")
     private Location location;
-
 
     public CourseOffering() {}
 
@@ -129,5 +127,12 @@ public class CourseOffering {
     @Override
     public int hashCode() {
         return Objects.hash(id, course, startDate, endDate, sessions, students, location);
+    }
+
+    @PreRemove
+    private void removeAssociationsWithStudents() {
+        for (User u : this.getStudents()) {
+            u.removeCourseOffering(this);
+        }
     }
 }

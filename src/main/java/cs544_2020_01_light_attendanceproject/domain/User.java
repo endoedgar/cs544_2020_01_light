@@ -162,4 +162,8 @@ public class User implements Serializable {
     public int hashCode() {
         return Objects.hash(id, firstName, lastName, password, enabled, username, barCodeId, email, roles, attendances);
     }
+
+    public void removeCourseOffering(CourseOffering courseOffering) {
+        this.courseOfferings.remove(courseOffering);
+    }
 }

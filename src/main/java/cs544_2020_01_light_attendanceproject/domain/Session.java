@@ -1,11 +1,13 @@
 package cs544_2020_01_light_attendanceproject.domain;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 
 import javax.persistence.*;
 import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -13,14 +15,16 @@ public class Session {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-    @ManyToOne(cascade = CascadeType.ALL)
-    @Valid
+    @ManyToOne//(cascade = CascadeType.ALL)
     private CourseOffering courseOffering;
     @ManyToOne
     private Timeslot timeslot;
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone="CST")
     @Temporal(TemporalType.DATE)
     private Date date;
+    @OneToMany(mappedBy = "session", cascade = CascadeType.REMOVE)
+    @JsonIgnoreProperties("session")
+    private List<Attendance> attendances;
 
     public Session() {}
 
@@ -72,6 +76,14 @@ public class Session {
                 Objects.equals(courseOffering, session.courseOffering) &&
                 Objects.equals(timeslot, session.timeslot) &&
                 Objects.equals(date, session.date);
+    }
+
+    public List<Attendance> getAttendances() {
+        return attendances;
+    }
+
+    public void setAttendances(List<Attendance> attendances) {
+        this.attendances = attendances;
     }
 
     @Override
