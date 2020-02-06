@@ -2,12 +2,9 @@ package cs544_2020_01_light_attendanceproject.domain;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
-import org.hibernate.annotations.Fetch;
-import org.springframework.context.annotation.Lazy;
+import com.fasterxml.jackson.annotation.JsonView;
 
 import javax.persistence.*;
-import javax.validation.Valid;
-import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 import java.util.Date;
 import java.util.List;
@@ -17,30 +14,37 @@ import java.util.Objects;
 public class CourseOffering {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
+    @JsonView(SummaryView.class)
     private Long id;
 
     @ManyToOne
     @NotNull(message = "please specify a course")
     @JsonIgnoreProperties("courseOfferings")
+    @JsonView(SummaryView.class)
     private Course course;
     @Temporal(TemporalType.DATE)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone="CST")
     @NotNull(message = "please specify startDate")
+    @JsonView(SummaryView.class)
     private Date startDate;
     @Temporal(TemporalType.DATE)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "yyyy-MM-dd", timezone="CST")
     @NotNull(message = "please specify endDate")
+    @JsonView(SummaryView.class)
     private Date endDate;
     @JsonIgnoreProperties("courseOffering")
     @OneToMany(mappedBy = "courseOffering",cascade = CascadeType.REMOVE)
+    @JsonView(DetailView.class)
     private List<Session> sessions;
     @JsonIgnoreProperties("courseOfferings")
     @ManyToMany(mappedBy = "courseOfferings")
+    @JsonView(DetailView.class)
     private List<User> students;
 
     @JsonIgnoreProperties("courseOfferings")
     @ManyToOne
     @NotNull(message = "please specify a location")
+    @JsonView(SummaryView.class)
     private Location location;
 
     public CourseOffering() {}
@@ -119,14 +123,12 @@ public class CourseOffering {
                 Objects.equals(course, that.course) &&
                 Objects.equals(startDate, that.startDate) &&
                 Objects.equals(endDate, that.endDate) &&
-                Objects.equals(sessions, that.sessions) &&
-                Objects.equals(students, that.students) &&
                 Objects.equals(location, that.location);
     }
 
     @Override
     public int hashCode() {
-        return Objects.hash(id, course, startDate, endDate, sessions, students, location);
+        return Objects.hash(id, course, startDate, endDate, location);
     }
 
     @PreRemove
@@ -138,4 +140,7 @@ public class CourseOffering {
     public void removeuser(User user) {
         this.students.remove(user);
     }
+
+    public interface SummaryView extends Course.SummaryView, Location.SummaryView {}
+    public interface DetailView extends SummaryView, Session.SummaryView, User.SummaryView {}
 }

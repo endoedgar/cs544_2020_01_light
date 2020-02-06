@@ -6,14 +6,10 @@ import javax.persistence.Temporal;
 import javax.persistence.TemporalType;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
-import javax.validation.constraints.Pattern;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
-import org.springframework.format.annotation.DateTimeFormat;
+import com.fasterxml.jackson.annotation.JsonView;
 
-import java.sql.Time;
-import java.time.LocalDateTime;
-import java.time.LocalTime;
 import java.util.Date;
 import java.util.Objects;
 
@@ -21,18 +17,22 @@ import java.util.Objects;
 public class Timeslot {
     @Id
     @NotEmpty(message = "Please provide an abbreviation.")
+    @JsonView(SummaryView.class)
     private String abbreviation;
     @NotEmpty(message = "Please provide a description.")
+    @JsonView(SummaryView.class)
     private String description;
 
     @Temporal(TemporalType.TIME)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm:ss", timezone="CST")
     @NotNull(message = "Please provide a start time.")
+    @JsonView(SummaryView.class)
     private Date beginTime;
 
     @Temporal(TemporalType.TIME)
     @JsonFormat(shape = JsonFormat.Shape.STRING, pattern = "HH:mm:ss", timezone="CST")
     @NotNull(message = "Please provide an end time.")
+    @JsonView(SummaryView.class)
     private Date endTime;
 
     public Timeslot() {
@@ -92,4 +92,7 @@ public class Timeslot {
     public int hashCode() {
         return Objects.hash(abbreviation, description, beginTime, endTime);
     }
+
+    public interface SummaryView {}
+    public interface DetailView extends SummaryView {}
 }

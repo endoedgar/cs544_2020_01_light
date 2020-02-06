@@ -1,5 +1,7 @@
 package cs544_2020_01_light_attendanceproject.domain;
 
+import com.fasterxml.jackson.annotation.JsonView;
+
 import javax.persistence.*;
 import java.util.ArrayList;
 import java.util.List;
@@ -8,8 +10,10 @@ import java.util.Objects;
 @Entity
 public class Role {
     @Id
+    @JsonView(SummaryView.class)
     private String type;
     @ManyToMany(mappedBy = "roles")
+    @JsonView(DetailView.class)
     private List<User> user = new ArrayList<>();
     public Role() {}
     public Role(String type) { this.type = type; }
@@ -45,4 +49,7 @@ public class Role {
     public void removeuser(User user) {
         this.user.remove(user);
     }
+
+    public interface SummaryView{}
+    public interface DetailView extends Session.SummaryView {}
 }

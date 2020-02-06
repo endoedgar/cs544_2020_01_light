@@ -1,5 +1,7 @@
 package cs544_2020_01_light_attendanceproject.controller;
 
+import com.fasterxml.jackson.annotation.JsonView;
+import cs544_2020_01_light_attendanceproject.domain.Location;
 import cs544_2020_01_light_attendanceproject.domain.Session;
 import cs544_2020_01_light_attendanceproject.domain.Timeslot;
 import cs544_2020_01_light_attendanceproject.exceptions.ItemNotFoundException;
@@ -36,12 +38,14 @@ public class SessionController {
 
     @GetMapping
     @Secured({ "ROLE_ADMIN" })
+    @JsonView(Session.SummaryView.class)
     public Iterable<Session> findAllSessions() {
         return sessionService.findAllSessions();
     }
 
     @GetMapping("/{id}")
     @Secured({ "ROLE_ADMIN", "ROLE_FACULTY", "ROLE_STUDENT" })
+    @JsonView(Session.DetailView.class)
     public Session findSession(@PathVariable Long id) {
         return sessionService.findSessionById(id).orElseThrow(() -> new ItemNotFoundException(id.toString(), Session.class));
     }

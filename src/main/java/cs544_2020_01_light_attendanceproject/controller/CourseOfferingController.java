@@ -1,5 +1,6 @@
 package cs544_2020_01_light_attendanceproject.controller;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import cs544_2020_01_light_attendanceproject.domain.*;
 import cs544_2020_01_light_attendanceproject.exceptions.ItemNotFoundException;
 import cs544_2020_01_light_attendanceproject.service.CourseOfferingService;
@@ -13,6 +14,7 @@ import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import javax.validation.Valid;
 import java.net.URI;
+import java.util.Iterator;
 import java.util.List;
 import java.util.Optional;
 
@@ -40,11 +42,13 @@ public class CourseOfferingController {
 
     @GetMapping
     @Secured({ "ROLE_ADMIN", "ROLE_FACULTY", "ROLE_STUDENT" })// case 3 views all offering course
+    @JsonView(CourseOffering.SummaryView.class)
     public Iterable<CourseOffering> viewAllOfferingCourse() {
         return courseOfferingServise.getAllCourseOffering();
     }
 
     @GetMapping("/{id}")
+    @JsonView(CourseOffering.DetailView.class)
     @Secured({ "ROLE_ADMIN", "ROLE_FACULTY", "ROLE_STUDENT" })
     public CourseOffering fetchCourseOffering(@PathVariable Long id) {
         return courseOfferingServise.getCourseOffering(id).orElseThrow(() -> new ItemNotFoundException(id.toString(), CourseOffering.class));
