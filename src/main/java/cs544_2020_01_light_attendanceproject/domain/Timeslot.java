@@ -1,16 +1,18 @@
 package cs544_2020_01_light_attendanceproject.domain;
 
-import javax.persistence.Entity;
-import javax.persistence.Id;
-import javax.persistence.Temporal;
-import javax.persistence.TemporalType;
+import javax.persistence.*;
+import javax.validation.Valid;
 import javax.validation.constraints.NotEmpty;
 import javax.validation.constraints.NotNull;
 
 import com.fasterxml.jackson.annotation.JsonFormat;
+import com.fasterxml.jackson.annotation.JsonIgnore;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonView;
 
+import java.util.Collections;
 import java.util.Date;
+import java.util.List;
 import java.util.Objects;
 
 @Entity
@@ -35,14 +37,21 @@ public class Timeslot {
     @JsonView(SummaryView.class)
     private Date endTime;
 
+    @OneToMany(mappedBy = "timeslot", cascade = {CascadeType.ALL})
+    @Valid
+    @JsonView(DetailView.class)
+    @JsonIgnoreProperties("timeslot")
+    private List<Session> session;
+
     public Timeslot() {
     }
 
-    public Timeslot(String abbreviation, String description, Date beginTime, Date endTime) {
+    public Timeslot(String abbreviation, String description, Date beginTime, Date endTime, List<Session> session) {
         this.abbreviation = abbreviation;
         this.description = description;
         this.beginTime = beginTime;
         this.endTime = endTime;
+        this.session = session;
     }
 
     public String getAbbreviation() {
@@ -77,6 +86,14 @@ public class Timeslot {
         this.endTime = endTime;
     }
 
+    public List<Session> getSession() {
+        return Collections.unmodifiableList(session);
+    }
+
+    public void setSession(List<Session> session) {
+        this.session = session;
+    }
+
     @Override
     public boolean equals(Object o) {
         if (this == o) return true;
@@ -94,5 +111,5 @@ public class Timeslot {
     }
 
     public interface SummaryView {}
-    public interface DetailView extends SummaryView {}
+    public interface DetailView extends SummaryView, Session.SummaryView {}
 }

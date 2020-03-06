@@ -68,6 +68,7 @@ public class LocationController {
 
 	@PutMapping("/{id}")
 	@ResponseStatus(HttpStatus.OK)
+	@JsonView(Location.DetailView.class)
 	public Location updateLocation(@Valid @RequestBody Location location, @PathVariable @Min(1) long id) {
 		Location oldLocation = locationService.findLocationById(id).orElse(location);
 		oldLocation.setDescription(location.getDescription());
@@ -76,6 +77,7 @@ public class LocationController {
 
 	@DeleteMapping("/{id}")
 	@ResponseStatus(HttpStatus.OK)
+	@JsonView(Location.DetailView.class)
 	public Location deleteLocation(@PathVariable long id) {
 		return locationService.findLocationById(id).
 				map(l -> {

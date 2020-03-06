@@ -81,8 +81,8 @@ class SessionControllerTest {
     );
 
     static final List<Timeslot> listOfTimeslots = Arrays.asList(
-            new Timeslot("AM", "Morning", toDate(LocalTime.of(0, 0,0)), toDate(LocalTime.of(11,59, 59))),
-            new Timeslot("PM", "Afternoon", toDate(LocalTime.of(12, 0,0)), toDate(LocalTime.of(23,59, 59)))
+            new Timeslot("AM", "Morning", toDate(LocalTime.of(0, 0,0)), toDate(LocalTime.of(11,59, 59)), new ArrayList<>()),
+            new Timeslot("PM", "Afternoon", toDate(LocalTime.of(12, 0,0)), toDate(LocalTime.of(23,59, 59)), new ArrayList<>())
     );
 
     static final List<Session> listOfSessions = Arrays.asList(

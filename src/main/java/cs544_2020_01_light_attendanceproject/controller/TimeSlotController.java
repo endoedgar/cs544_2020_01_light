@@ -5,6 +5,7 @@ package cs544_2020_01_light_attendanceproject.controller;
 
 import javax.validation.Valid;
 
+import com.fasterxml.jackson.annotation.JsonView;
 import cs544_2020_01_light_attendanceproject.domain.User;
 import cs544_2020_01_light_attendanceproject.exceptions.ItemNotFoundException;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -26,6 +27,8 @@ import cs544_2020_01_light_attendanceproject.service.TimeSlotService;
 import org.springframework.web.servlet.support.ServletUriComponentsBuilder;
 
 import java.net.URI;
+import java.sql.Time;
+import java.util.stream.Collectors;
 
 /**
  * @author Adeola Adeleke
@@ -62,18 +65,21 @@ public class TimeSlotController {
 
 	@Secured(value = { "ROLE_ADMIN", "ROLE_FACULTY" })
     @GetMapping
+    @JsonView(Timeslot.SummaryView.class)
     public Iterable<Timeslot> fetchAllTs() {
         return timeSlotService.getAll();
     }
 
 	@Secured(value = { "ROLE_ADMIN" })
     @GetMapping("/{abbr}")
+    @JsonView(Timeslot.DetailView.class)
     public Timeslot fetchTs(@PathVariable String abbr) {
         return timeSlotService.get(abbr).orElseThrow(() -> new ItemNotFoundException(abbr, Timeslot.class));
     }
 
 	@Secured(value = { "ROLE_ADMIN" })
     @DeleteMapping("/{abbr}")
+    @JsonView(Timeslot.DetailView.class)
     public Timeslot deleteTs(@PathVariable String abbr) {
 	    return timeSlotService.get(abbr).map(ts -> {
             timeSlotService.delete(ts);
@@ -83,11 +89,13 @@ public class TimeSlotController {
 
 	@Secured(value = { "ROLE_ADMIN" })
     @PutMapping("/{abbr}")
+    @JsonView(Timeslot.DetailView.class)
     public Timeslot updateTs(@RequestBody @Valid Timeslot newTs, @PathVariable String abbr) {
 	    Timeslot oldTimeslot = timeSlotService.get(abbr).orElse(newTs);
 	    oldTimeslot.setBeginTime(newTs.getBeginTime());
 	    oldTimeslot.setDescription(newTs.getDescription());
 	    oldTimeslot.setEndTime(newTs.getEndTime());
+	    oldTimeslot.setSession(newTs.getSession().stream().collect(Collectors.toList()));
         return timeSlotService.update(oldTimeslot);
     }
 	

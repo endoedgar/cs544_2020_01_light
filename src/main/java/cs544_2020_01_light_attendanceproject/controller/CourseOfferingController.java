@@ -54,6 +54,7 @@ public class CourseOfferingController {
         return courseOfferingServise.getCourseOffering(id).orElseThrow(() -> new ItemNotFoundException(id.toString(), CourseOffering.class));
     }
     @GetMapping("/getSessions/{id}")
+    @JsonView(Session.SummaryView.class)
     @Secured({ "ROLE_ADMIN", "ROLE_FACULTY", "ROLE_STUDENT" }) //case 4 views related sessions
     public List<Session>  fetchCourseSessions(@PathVariable Long id) {
         return courseOfferingServise.getCourseSessions(id).orElseThrow(() ->
@@ -61,6 +62,7 @@ public class CourseOfferingController {
     }
     @DeleteMapping("/{id}")
     @Secured({"ROLE_ADMIN"})
+    @JsonView(CourseOffering.DetailView.class)
     public CourseOffering deleteCourseOffering(@PathVariable Long id) {
         return courseOfferingServise.getCourseOffering(id).map(co -> {
             courseOfferingServise.deleteOfferingCourse(co);
@@ -70,6 +72,7 @@ public class CourseOfferingController {
 
     @PutMapping("/{id}")
     @Secured({"ROLE_ADMIN"})
+    @JsonView(CourseOffering.DetailView.class)
     public CourseOffering updateCourseOffering(@RequestBody @Valid CourseOffering newCourseOffering, @PathVariable Long id) {
         CourseOffering oldCourseOffering = courseOfferingServise.getCourseOffering(id).orElse(newCourseOffering);
         oldCourseOffering.setCourse(newCourseOffering.getCourse());

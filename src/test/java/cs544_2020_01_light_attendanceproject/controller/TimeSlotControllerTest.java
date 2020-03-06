@@ -21,10 +21,7 @@ import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 
 import java.math.BigInteger;
 import java.time.*;
-import java.util.Arrays;
-import java.util.Date;
-import java.util.List;
-import java.util.Optional;
+import java.util.*;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.junit.jupiter.api.Assertions.*;
@@ -58,8 +55,8 @@ class TimeSlotControllerTest {
     }
 
     static final List<Timeslot> listOfTimeslots = Arrays.asList(
-            new Timeslot("AM", "Morning", toDate(LocalTime.of(0, 0,0)), toDate(LocalTime.of(11,59, 59))),
-            new Timeslot("PM", "Afternoon", toDate(LocalTime.of(12, 0,0)), toDate(LocalTime.of(23,59, 59)))
+            new Timeslot("AM", "Morning", toDate(LocalTime.of(0, 0,0)), toDate(LocalTime.of(11,59, 59)), new ArrayList<>()),
+            new Timeslot("PM", "Afternoon", toDate(LocalTime.of(12, 0,0)), toDate(LocalTime.of(23,59, 59)), new ArrayList<>())
     );
 
     public String asJsonString(final Object obj) {
@@ -140,8 +137,8 @@ class TimeSlotControllerTest {
     @Test
     @WithMockUser(value = "admin",roles={"ADMIN"})
     void updateTs() throws Exception {
-        Timeslot oldTimeslot = new Timeslot("AM", "Morning", toDate(LocalTime.of(0, 0, 0)), toDate(LocalTime.of(11,59, 59)));
-        Timeslot newTimeslot = new Timeslot("AM", "Morning new", toDate(LocalTime.of(0, 0,0)), toDate(LocalTime.of(11,59, 59)));
+        Timeslot oldTimeslot = new Timeslot("AM", "Morning", toDate(LocalTime.of(0, 0, 0)), toDate(LocalTime.of(11,59, 59)),new ArrayList<>());
+        Timeslot newTimeslot = new Timeslot("AM", "Morning new", toDate(LocalTime.of(0, 0,0)), toDate(LocalTime.of(11,59, 59)),new ArrayList<>());
 
         when(timeSlotService.get(oldTimeslot.getAbbreviation())).thenReturn(Optional.of(oldTimeslot));
         when(timeSlotService.update(any(Timeslot.class))).thenReturn(null);

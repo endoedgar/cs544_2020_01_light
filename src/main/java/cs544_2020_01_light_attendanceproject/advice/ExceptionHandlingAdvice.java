@@ -65,6 +65,7 @@ public class ExceptionHandlingAdvice extends ResponseEntityExceptionHandler {
 		List<String> details = new ArrayList<>();
 		details.add(ex.getLocalizedMessage());
 		ErrorResponse error = new ErrorResponse("Server Error", details);
+		ex.printStackTrace();
 		return new ResponseEntity(error, HttpStatus.INTERNAL_SERVER_ERROR);
 	}
 

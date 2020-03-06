@@ -59,19 +59,18 @@ public class User implements Serializable {
 	@JsonView(SummaryView.class)
 	@JoinTable
 	private Set<Role> roles;
-	@OneToMany(mappedBy = "user", fetch = FetchType.LAZY)
+	@OneToMany(mappedBy = "user")
 	@JsonIgnoreProperties("user")
 	@JsonView(DetailView.class)
 	private List<Attendance> attendances;
-	@ManyToMany(fetch = FetchType.LAZY)
+	@ManyToMany
 	@JsonView(DetailView.class)
 	@JsonIgnoreProperties("user")
 	@JoinTable(name = "user_course_offerings", joinColumns = { @JoinColumn(name = "user_id") }, inverseJoinColumns = {
 			@JoinColumn(name = "course_offerings_id") })
 	private List<CourseOffering> courseOfferings;
 
-	public User() {
-	}
+	public User() { }
 
 	public Long getId() {
 		return id;
@@ -197,9 +196,7 @@ public class User implements Serializable {
 		}
 	}
 
-	public interface SummaryView extends Role.SummaryView {
-	}
+	public interface SummaryView extends Role.SummaryView { }
 
-	public interface DetailView extends SummaryView, Attendance.SummaryView, CourseOffering.SummaryView {
-	}
+	public interface DetailView extends SummaryView, Attendance.SummaryView, CourseOffering.SummaryView { }
 }

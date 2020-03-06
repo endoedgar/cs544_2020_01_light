@@ -48,6 +48,7 @@ public class CourseController {
 
 	@DeleteMapping("/{name}")
 	@Secured(value = {"ROLE_ADMIN"})
+	@JsonView(Course.DetailView.class)
 	public Course deleteCourse(@PathVariable String name) {
 		return courseService.findCourseByName(name).map(c -> {
 					courseService.deleteCourse(c);
@@ -57,6 +58,7 @@ public class CourseController {
 
 	@PutMapping("/{name}")
 	@Secured(value = {"ROLE_ADMIN"})
+	@JsonView(Course.DetailView.class)
 	public Course updateCourse(@PathVariable String name, @RequestBody @Valid Course newCourse) {
 		Course oldCourse = courseService.findCourseByName(name).orElse(newCourse);
 		oldCourse.setName(newCourse.getName());
